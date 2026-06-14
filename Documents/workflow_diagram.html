@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AntiGravity Agent Framework — Workflow Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #080c14;
+    --surface: #0d1520;
+    --surface2: #111d2e;
+    --border: rgba(99,179,255,0.12);
+    --accent: #3b9eff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --glow: rgba(59,158,255,0.15);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Background grid ── */
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(rgba(59,158,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(59,158,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events:none;
+  }
+
+  /* ── Header ── */
+  header {
+    text-align:center;
+    padding: 56px 24px 32px;
+    position:relative;
+  }
+  .logo-badge {
+    display:inline-flex; align-items:center; gap:10px;
+    background: rgba(59,158,255,0.08);
+    border: 1px solid rgba(59,158,255,0.2);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 12px; font-weight:600; letter-spacing:.08em;
+    color: var(--accent); margin-bottom:20px;
+    text-transform:uppercase;
+  }
+  h1 {
+    font-size: clamp(28px,5vw,52px);
+    font-weight:800;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 60%, var(--accent2) 100%);
+    -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    line-height:1.15;
+  }
+  .subtitle {
+    margin-top:12px; color:var(--muted); font-size:15px;
+  }
+
+  /* ── Scenario tabs ── */
+  .tabs {
+    display:flex; justify-content:center; gap:8px;
+    padding: 0 24px 40px;
+    flex-wrap:wrap;
+  }
+  .tab {
+    padding: 10px 24px; border-radius:100px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted); font-size:13px; font-weight:600;
+    cursor:pointer; transition: all .25s;
+    letter-spacing:.04em;
+  }
+  .tab:hover { border-color: var(--accent); color:var(--accent); }
+  .tab.active {
+    background: var(--accent); border-color:var(--accent);
+    color:#fff; box-shadow: 0 0 24px rgba(59,158,255,0.35);
+  }
+
+  /* ── Main diagram container ── */
+  .diagram-wrap {
+    max-width:1200px; margin:0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Scenario section ── */
+  .scenario { display:none; }
+  .scenario.active { display:block; }
+
+  .scenario-header {
+    text-align:center; margin-bottom:40px;
+  }
+  .scenario-tag {
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 8px 20px; border-radius:100px;
+    font-size:13px; font-weight:700; letter-spacing:.06em;
+    margin-bottom:12px;
+  }
+  .scenario-tag.green  { background:rgba(16,185,129,.12); border:1px solid rgba(16,185,129,.3); color:var(--accent3); }
+  .scenario-tag.blue   { background:rgba(59,158,255,.12); border:1px solid rgba(59,158,255,.3); color:var(--accent); }
+  .scenario-tag.purple { background:rgba(124,58,237,.12); border:1px solid rgba(124,58,237,.3); color:var(--accent2); }
+  .scenario-desc { color:var(--muted); font-size:14px; }
+
+  /* ── Pipeline ── */
+  .pipeline {
+    display:flex; flex-direction:column; gap:0;
+    position:relative;
+  }
+  .pipeline::before {
+    content:''; position:absolute;
+    left: 50%; top:0; bottom:0;
+    width:2px;
+    background: linear-gradient(to bottom, transparent, var(--accent) 10%, var(--accent) 90%, transparent);
+    opacity:.25;
+    transform:translateX(-50%);
+  }
+
+  /* ── Phase card ── */
+  .phase {
+    display:grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap:0; align-items:start;
+    margin-bottom:0;
+  }
+
+  .phase-left, .phase-right {
+    padding: 0 24px 32px;
+  }
+
+  .phase-left { text-align:right; }
+  .phase-right { text-align:left; }
+
+  .phase-mid {
+    display:flex; flex-direction:column;
+    align-items:center;
+    position:relative; z-index:1;
+  }
+
+  .phase-node {
+    width:48px; height:48px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:800;
+    flex-shrink:0;
+    position:relative;
+    transition: transform .25s;
+  }
+  .phase-node:hover { transform: scale(1.1); }
+
+  .phase-line {
+    width:2px; flex:1; min-height:32px;
+    background: linear-gradient(to bottom, currentColor, transparent);
+    opacity:.3;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    transition: all .3s;
+    cursor:default;
+    position:relative;
+    overflow:hidden;
+  }
+  .card::before {
+    content:''; position:absolute;
+    inset:0; opacity:0;
+    background: radial-gradient(circle at 50% 0%, var(--glow), transparent 70%);
+    transition: opacity .3s;
+  }
+  .card:hover { transform:translateY(-3px); border-color:rgba(59,158,255,.3); }
+  .card:hover::before { opacity:1; }
+
+  .card-tag {
+    display:inline-block;
+    font-size:10px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase;
+    padding:3px 10px; border-radius:100px;
+    margin-bottom:10px;
+  }
+
+  .card h3 {
+    font-size:15px; font-weight:700; margin-bottom:6px;
+    color:#fff;
+  }
+  .card p { font-size:12.5px; color:var(--muted); line-height:1.6; }
+
+  .io-row {
+    display:flex; gap:6px; flex-wrap:wrap;
+    margin-top:10px;
+  }
+  .io-chip {
+    font-size:10.5px; font-weight:500;
+    padding:3px 9px; border-radius:6px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .io-in  { background:rgba(59,158,255,.1); color:var(--accent); border:1px solid rgba(59,158,255,.2); }
+  .io-out { background:rgba(16,185,129,.1); color:var(--accent3); border:1px solid rgba(16,185,129,.2); }
+  .io-chk { background:rgba(245,158,11,.1); color:var(--accent4); border:1px solid rgba(245,158,11,.2); }
+
+  /* Checkpoint banner */
+  .checkpoint {
+    margin:4px 0 0;
+    background: rgba(245,158,11,.07);
+    border: 1px solid rgba(245,158,11,.25);
+    border-radius:10px;
+    padding:10px 14px;
+    font-size:12px; color:var(--accent4);
+    display:flex; align-items:center; gap:8px;
+  }
+
+  /* Parallel badge */
+  .parallel-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(124,58,237,.12);
+    border:1px solid rgba(124,58,237,.3);
+    border-radius:8px; padding:4px 10px;
+    font-size:11px; color:var(--accent2); font-weight:600;
+    margin-top:8px;
+  }
+
+  /* Colors per agent */
+  .ag01 { --c:#3b9eff; }
+  .ag02 { --c:#7c3aed; }
+  .ag03 { --c:#10b981; }
+  .ag04 { --c:#f59e0b; }
+  .ag05 { --c:#ec4899; }
+  .agX  { --c:#64748b; }
+
+  .phase-node { background: rgba(var(--cr),var(--cg),var(--cb),.15); border:2px solid; }
+
+  /* simpler: just use named colors */
+  .ag01 .phase-node { background:rgba(59,158,255,.15); border-color:rgba(59,158,255,.5); color:var(--c); }
+  .ag02 .phase-node { background:rgba(124,58,237,.15); border-color:rgba(124,58,237,.5); color:var(--c); }
+  .ag03 .phase-node { background:rgba(16,185,129,.15); border-color:rgba(16,185,129,.5);  color:var(--c); }
+  .ag04 .phase-node { background:rgba(245,158,11,.15); border-color:rgba(245,158,11,.5); color:var(--c); }
+  .ag05 .phase-node { background:rgba(236,72,153,.15); border-color:rgba(236,72,153,.5); color:var(--c); }
+  .agX  .phase-node { background:rgba(100,116,139,.15);border-color:rgba(100,116,139,.5);color:var(--c); }
+
+  .ag01 .card-tag { background:rgba(59,158,255,.12); color:#3b9eff; }
+  .ag02 .card-tag { background:rgba(124,58,237,.12); color:#7c3aed; }
+  .ag03 .card-tag { background:rgba(16,185,129,.12);  color:#10b981; }
+  .ag04 .card-tag { background:rgba(245,158,11,.12); color:#f59e0b; }
+  .ag05 .card-tag { background:rgba(236,72,153,.12); color:#ec4899; }
+  .agX  .card-tag { background:rgba(100,116,139,.12);color:#64748b; }
+
+  .ag01 .card { border-top-color:rgba(59,158,255,.3); }
+  .ag02 .card { border-top-color:rgba(124,58,237,.3); }
+  .ag03 .card { border-top-color:rgba(16,185,129,.3); }
+  .ag04 .card { border-top-color:rgba(245,158,11,.3); }
+  .ag05 .card { border-top-color:rgba(236,72,153,.3); }
+
+  .ag01 .phase-line { color:#3b9eff; }
+  .ag02 .phase-line { color:#7c3aed; }
+  .ag03 .phase-line { color:#10b981; }
+  .ag04 .phase-line { color:#f59e0b; }
+  .ag05 .phase-line { color:#ec4899; }
+  .agX  .phase-line { color:#64748b; }
+
+  /* Legend */
+  .legend {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:16px;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+    max-width:1200px; margin:40px auto 0;
+  }
+  .legend-item {
+    display:flex; align-items:center; gap:8px;
+    font-size:12px; color:var(--muted);
+  }
+  .legend-dot {
+    width:10px; height:10px; border-radius:50%;
+    flex-shrink:0;
+  }
+
+  /* Global rules box */
+  .global-rules {
+    background: var(--surface);
+    border:1px solid rgba(99,179,255,.15);
+    border-radius:16px;
+    padding: 20px 24px;
+    margin-bottom:40px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;
+  }
+  .rule-item {
+    display:flex; gap:10px; align-items:flex-start;
+  }
+  .rule-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
+  .rule-title { font-size:13px; font-weight:600; color:#fff; margin-bottom:3px; }
+  .rule-desc  { font-size:11.5px; color:var(--muted); line-height:1.5; }
+
+  /* Empty side placeholder */
+  .empty { padding:20px; }
+
+  @media(max-width:700px){
+    .pipeline::before { left:28px; }
+    .phase { grid-template-columns:56px 1fr; }
+    .phase-left { display:none; }
+    .phase-right { text-align:left; }
+    .phase-mid { align-items:flex-start; padding-left:4px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">⚡ Multi-Agent System</div>
+  <h1>AntiGravity Agent Framework</h1>
+  <p class="subtitle">Workflow Pipeline Diagram — Orchestrator-Driven Multi-Agent Architecture</p>
+</header>
+
+<!-- Global Rules -->
+<div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+  <div class="global-rules">
+    <div class="rule-item">
+      <div class="rule-icon">🏛️</div>
+      <div>
+        <div class="rule-title">00_Global_Rules</div>
+        <div class="rule-desc">Hiến pháp tối cao. Tất cả agent đọc trước khi spawn. Ưu tiên cao nhất.</div>
+      </div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-icon">🔒</div>
+      <div>
+        <div class="rule-title">Zero-Hallucination</div>
+        <div class="rule-desc">Agent không fabricate dữ liệu. Thiếu → ghi vào [PENDING_ISSUES].</div>
+      </div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-icon">🧩</div>
+      <div>
+        <div class="rule-title">Separation of Concerns</div>
+        <div class="rule-desc">AG-01 không code. AG-03 không tóm tắt SRS. Mỗi agent chỉ làm đúng vai trò.</div>
+      </div>
+    </div>
+    <div class="rule-item">
+      <div class="rule-icon">📋</div>
+      <div>
+        <div class="rule-title">Output → JSON</div>
+        <div class="rule-desc">Mọi agent xuất kết quả dạng chuẩn, đẩy vào thư mục Outputs/ của agent tiếp theo.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="showScenario(1,this)">🚀 Scenario 1 — Greenfield</button>
+  <button class="tab" onclick="showScenario(2,this)">🛠️ Scenario 2 — Maintenance</button>
+  <button class="tab" onclick="showScenario(3,this)">🏗️ Scenario 3 — Refactoring</button>
+</div>
+
+<div class="diagram-wrap">
+
+<!-- ═══════════════════════════════════════
+     SCENARIO 1: GREENFIELD
+════════════════════════════════════════ -->
+<div class="scenario active" id="s1">
+  <div class="scenario-header">
+    <div class="scenario-tag green">🚀 Greenfield — Dự án mới 100%</div>
+    <p class="scenario-desc">SRS → AG-01 → AG-02 → [PM Gate] → AG-03 Sprint1 → [PM Gate] → AG-03 Sprint2 [Task Loop] → AG-04 → AG-05</p>
+  </div>
+
+  <div class="pipeline">
+
+    <!-- INPUT -->
+    <div class="phase agX">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">INPUT</span>
+          <h3>Tài liệu đầu vào</h3>
+          <div class="io-row">
+            <span class="io-chip io-in">SRS.docx</span>
+            <span class="io-chip io-in">BRD.pdf</span>
+            <span class="io-chip io-in">*.md / *.txt</span>
+          </div>
+          <p style="margin-top:8px">Ném vào thư mục <code style="color:#3b9eff;font-family:monospace">01_Analyst/Inputs/</code></p>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">📥</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right empty"></div>
+    </div>
+
+    <!-- AG-01 -->
+    <div class="phase ag01">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">01</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-01 — Business Analyst</span>
+          <h3>Phân tích & chuẩn hoá yêu cầu</h3>
+          <p>Đọc SRS/BRD, phân rã thành User Stories, Epic, Use Cases, Non-functional Requirements. Gắn cờ [PENDING_ISSUES].</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Requirements.md</span>
+            <span class="io-chip io-out">UseCases.md</span>
+            <span class="io-chip io-out">experience.md</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AG-02 -->
+    <div class="phase ag02">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-02 — System Architect</span>
+          <h3>Thiết kế kiến trúc hệ thống</h3>
+          <p>Đọc Requirements từ AG-01 + 03_Anti_Gravity_Logic.md. Xuất ERD, API contract, Tech Stack, System Design.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">SystemDesign.md</span>
+            <span class="io-chip io-out">ERD.md</span>
+            <span class="io-chip io-out">API_Contract.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">02</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="checkpoint">🛑 <strong>PM Gate 1</strong> — Review 02_Architect/Outputs/ rồi xác nhận tiếp tục</div>
+      </div>
+    </div>
+
+    <!-- AG-03 Sprint 1 -->
+    <div class="phase ag03">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">03</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-03 Sprint 1 — Developer</span>
+          <h3>Lập Implementation Plan</h3>
+          <p>Phân rã kiến trúc thành các Task có ID dạng <code style="color:#10b981;font-family:monospace">S1-M1-T01</code>. Ước lượng độ phức tạp từng task.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Implementation_Plan.md</span>
+            <span class="io-chip io-out">Changelog.md</span>
+          </div>
+        </div>
+        <div class="checkpoint" style="margin-top:8px">🛑 <strong>PM Gate 2</strong> — Phê duyệt Plan trước khi code</div>
+      </div>
+    </div>
+
+    <!-- AG-03 Sprint 2 -->
+    <div class="phase ag03">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-03 Sprint 2 — Code Loop</span>
+          <h3>Code từng Task — Task-by-Task Checkpoint</h3>
+          <p>Với mỗi task trong Plan: AG-03 code → PM review → <strong>approve / reject / skip</strong>. Nếu reject → dừng Sprint, AG-03 đọc Changelog sửa lại.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Source Code</span>
+            <span class="io-chip io-out">Unit Tests</span>
+            <span class="io-chip io-chk">Changelog.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">03</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:14px 16px">
+          <div style="font-size:12px;font-weight:700;color:#10b981;margin-bottom:10px">🔁 Task Loop</div>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted)">
+            <div>①  spawn AG-03 → execute task</div>
+            <div>②  PM: <code style="color:#f59e0b">approve</code> → task tiếp theo</div>
+            <div>③  PM: <code style="color:#ef4444">reject</code> → ghi Changelog → <strong>STOP</strong></div>
+            <div>④  PM: <code style="color:#64748b">skip</code> → bỏ qua task</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AG-04 -->
+    <div class="phase ag04">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">04</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-04 — QA Reviewer</span>
+          <h3>Unit Test + Security Scan</h3>
+          <p>Chạy test suite, kiểm tra security (SQL Injection, Auth, XSS), xuất Bug Report và Security Report.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Bug_Report.md</span>
+            <span class="io-chip io-out">Security_Report.md</span>
+            <span class="io-chip io-out">Test_Coverage.md</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AG-05 -->
+    <div class="phase ag05">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-05 — Final Documenter</span>
+          <h3>Xuất tài liệu hoàn chỉnh</h3>
+          <p>Gom tất cả Outputs → render ra <strong>.docx / .xlsx / .pdf</strong> theo template chuẩn.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Final_Report.docx</span>
+            <span class="io-chip io-out">SRS_Final.docx</span>
+            <span class="io-chip io-out">Handoff_Doc.xlsx</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">05</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div style="background:rgba(236,72,153,.06);border:1px solid rgba(236,72,153,.2);border-radius:12px;padding:14px 16px">
+          <div style="font-size:12px;font-weight:700;color:#ec4899;margin-bottom:6px">🎉 OUTPUT</div>
+          <div style="font-size:12px;color:var(--muted)">05_Final_Doc/Outputs/<br>Deliverables sẵn sàng giao khách hàng</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCENARIO 2: MAINTENANCE
+════════════════════════════════════════ -->
+<div class="scenario" id="s2">
+  <div class="scenario-header">
+    <div class="scenario-tag blue">🛠️ Maintenance — Vá lỗi / Thêm feature nhỏ</div>
+    <p class="scenario-desc">Legacy Code → AG-02 đọc → [PM nhập yêu cầu] → AG-01 → AG-02 Patch Plan → AG-03 → AG-04 → AG-05</p>
+  </div>
+
+  <div class="pipeline">
+
+    <!-- INPUT -->
+    <div class="phase agX">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">INPUT</span>
+          <h3>Source code cũ</h3>
+          <p>Ném vào <code style="color:#3b9eff;font-family:monospace">03_Developer/Inputs/</code></p>
+          <div class="io-row">
+            <span class="io-chip io-in">legacy source</span>
+            <span class="io-chip io-in">bug ticket</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">📥</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right empty"></div>
+    </div>
+
+    <!-- Phase 0A: AG-02 đọc legacy -->
+    <div class="phase ag02">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">02</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-02 Phase 0A — Đọc Legacy Code</span>
+          <h3>Trích xuất kiến trúc hiện tại</h3>
+          <p>Đọc source code cũ, reverse-engineer ra Legacy_Architecture.md để làm context cho các bước tiếp theo.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Legacy_Architecture.md</span>
+          </div>
+        </div>
+        <div class="checkpoint" style="margin-top:8px">✋ <strong>PM nhập yêu cầu</strong> — Bug cần fix hoặc feature cần thêm (auto-save → PM_Request_*.md)</div>
+      </div>
+    </div>
+
+    <!-- AG-01 -->
+    <div class="phase ag01">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-01 — Business Analyst</span>
+          <h3>Phân tích yêu cầu PM + legacy context</h3>
+          <p>Kết hợp PM_Request với Legacy_Architecture để tạo delta requirements chính xác, không phá vỡ logic cũ.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Delta_Requirements.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">01</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right empty"></div>
+    </div>
+
+    <!-- AG-02 Patch Plan -->
+    <div class="phase ag02">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">02</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-02 — Patch Plan</span>
+          <h3>Thiết kế Patch Plan an toàn</h3>
+          <p>Phân tích impact, xác định file/module cần sửa, đảm bảo backward-compatibility.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Patch_Plan.md</span>
+            <span class="io-chip io-out">Impact_Analysis.md</span>
+          </div>
+        </div>
+        <div class="checkpoint" style="margin-top:8px">🛑 <strong>PM Gate</strong> — Review Patch Plan trước khi AG-03 patch</div>
+      </div>
+    </div>
+
+    <!-- AG-03 Task Loop -->
+    <div class="phase ag03">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-03 — Patch tuần tự</span>
+          <h3>Patch code theo Ticket — Task Checkpoint</h3>
+          <p>Mỗi ticket: AG-03 patch → PM review → approve/reject. Nếu reject → dừng, ghi Changelog.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Patched Code</span>
+            <span class="io-chip io-chk">Changelog.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">03</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right empty"></div>
+    </div>
+
+    <!-- AG-04 -->
+    <div class="phase ag04">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">04</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-04 — QA Reviewer</span>
+          <h3>Regression Test + Security Scan</h3>
+          <p>Kiểm tra phần đã patch không phá vỡ logic cũ. Chạy regression test suite đầy đủ.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Regression_Report.md</span>
+            <span class="io-chip io-out">Security_Report.md</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AG-05 -->
+    <div class="phase ag05">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-05 — Final Documenter</span>
+          <h3>Xuất Patch Report</h3>
+          <div class="io-row">
+            <span class="io-chip io-out">Patch_Report.docx</span>
+            <span class="io-chip io-out">Release_Note.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">05</div>
+      </div>
+      <div class="phase-right empty"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCENARIO 3: REFACTORING
+════════════════════════════════════════ -->
+<div class="scenario" id="s3">
+  <div class="scenario-header">
+    <div class="scenario-tag purple">🏗️ Refactoring — Viết lại toàn bộ / nâng cấp kiến trúc</div>
+    <p class="scenario-desc">AG-01 ‖ AG-02 (SONG SONG) → AG-02 cross-check → [PM Gate] → AG-03 → AG-04 → AG-05</p>
+  </div>
+
+  <div class="pipeline">
+
+    <!-- INPUT -->
+    <div class="phase agX">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">INPUT A</span>
+          <h3>SRS mới</h3>
+          <p>→ <code style="color:#3b9eff;font-family:monospace">01_Analyst/Inputs/</code></p>
+          <div class="io-row"><span class="io-chip io-in">SRS mới</span></div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">📥</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">INPUT B</span>
+          <h3>Legacy Source Code</h3>
+          <p>→ <code style="color:#3b9eff;font-family:monospace">03_Developer/Inputs/</code></p>
+          <div class="io-row"><span class="io-chip io-in">legacy code</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PARALLEL Phase 0B -->
+    <div class="phase" style="position:relative">
+      <div class="phase-left ag01" style="padding-bottom:32px">
+        <div class="card">
+          <span class="card-tag" style="background:rgba(59,158,255,.12);color:#3b9eff">AG-01 — Đọc SRS mới</span>
+          <h3>Phân tích yêu cầu đồng thời</h3>
+          <p>Chạy song song với AG-02. Xuất New_Requirements.md trong khi AG-02 đọc legacy.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">New_Requirements.md</span>
+          </div>
+          <div class="parallel-badge">⚡ ThreadPoolExecutor — Parallel</div>
+        </div>
+      </div>
+      <div class="phase-mid" style="gap:0">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(124,58,237,.2);border:2px solid rgba(124,58,237,.5);display:flex;align-items:center;justify-content:center;font-size:18px">⚡</div>
+        <div style="width:2px;flex:1;min-height:32px;background:linear-gradient(to bottom,rgba(124,58,237,.5),transparent);"></div>
+      </div>
+      <div class="phase-right ag02" style="padding-bottom:32px">
+        <div class="card">
+          <span class="card-tag" style="background:rgba(124,58,237,.12);color:#7c3aed">AG-02 — Đọc Legacy Code</span>
+          <h3>Trích xuất Business Logic cũ</h3>
+          <p>Chạy song song với AG-01. Đảm bảo không mất business logic quan trọng khi rewrite.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">BusinessLogic_Old.md</span>
+          </div>
+          <div class="parallel-badge">⚡ ThreadPoolExecutor — Parallel</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AG-02 Cross-check -->
+    <div class="phase ag02">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-02 — Cross-Check & New Architecture</span>
+          <h3>So sánh SRS mới vs Business Logic cũ</h3>
+          <p>Phát hiện conflict, bảo toàn nghiệp vụ quan trọng, thiết kế kiến trúc mới hoàn toàn.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">New_Architecture.md</span>
+            <span class="io-chip io-out">Conflict_Report.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">02</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="checkpoint">🛑 <strong>PM Gate</strong> — Đảm bảo KHÔNG mất business logic cũ</div>
+      </div>
+    </div>
+
+    <!-- AG-03 -->
+    <div class="phase ag03">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">03</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-03 — Viết lại theo Layer</span>
+          <h3>Rewrite tuần tự từng Layer</h3>
+          <p>Database → Repository → Service → Controller → API. Mỗi layer: AG-03 viết → PM approve → layer tiếp.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">New Source Code</span>
+            <span class="io-chip io-chk">Changelog.md</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AG-04 -->
+    <div class="phase ag04">
+      <div class="phase-left">
+        <div class="card">
+          <span class="card-tag">AG-04 — QA Reviewer</span>
+          <h3>Full Regression + Security Scan</h3>
+          <p>Toàn bộ test suite: unit → integration → E2E → security. Đảm bảo parity với hệ thống cũ.</p>
+          <div class="io-row">
+            <span class="io-chip io-out">Full_Test_Report.md</span>
+            <span class="io-chip io-out">Parity_Check.md</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase-mid">
+        <div class="phase-node">04</div>
+        <div class="phase-line"></div>
+      </div>
+      <div class="phase-right empty"></div>
+    </div>
+
+    <!-- AG-05 -->
+    <div class="phase ag05">
+      <div class="phase-left empty"></div>
+      <div class="phase-mid">
+        <div class="phase-node">05</div>
+      </div>
+      <div class="phase-right">
+        <div class="card">
+          <span class="card-tag">AG-05 — Final Documenter</span>
+          <h3>Xuất Migration Report</h3>
+          <div class="io-row">
+            <span class="io-chip io-out">Migration_Report.docx</span>
+            <span class="io-chip io-out">Architecture_Delta.md</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- end diagram-wrap -->
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#3b9eff"></div>AG-01 Business Analyst</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div>AG-02 System Architect</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>AG-03 Developer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>AG-04 QA Reviewer</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ec4899"></div>AG-05 Final Documenter</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f59e0b;border-radius:2px"></div>🛑 PM Gate (Human Checkpoint)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7c3aed;border-radius:2px"></div>⚡ Parallel Execution</div>
+</div>
+
+<!-- Footer -->
+<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)">
+  AntiGravity Agent Framework • Generated 2026-03-25 •
+  <code style="color:#3b9eff;font-family:monospace">python3 utils/orchestrator.py --scenario [1|2|3]</code>
+</div>
+
+<script>
+function showScenario(n, btn) {
+  document.querySelectorAll('.scenario').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('s' + n).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

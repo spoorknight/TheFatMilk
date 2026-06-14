@@ -1,0 +1,182 @@
+<!-- MÔ TẢ: System Architecture Overview — THE FAT MILK. Tổng quan các layer (Frontend / Backend / DB / External), công nghệ, giao thức kết nối. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Architecture — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;padding:24px;overflow-x:auto}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px}
+.sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:24px}
+.canvas{max-width:1100px;margin:0 auto}
+.layer{border:1px solid #1e3a5f;border-radius:12px;padding:20px;margin-bottom:16px;position:relative}
+.layer-title{position:absolute;top:-12px;left:20px;background:#080c14;padding:0 10px;font-size:13px;font-weight:700;color:#3b9eff}
+.boxes{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.box{background:#0f172a;border:1.5px solid #334155;border-radius:10px;padding:16px 20px;min-width:180px;text-align:center;transition:all .2s}
+.box:hover{border-color:#3b9eff;transform:translateY(-2px)}
+.box h3{font-size:14px;margin-bottom:4px}
+.box .tech{font-size:11px;color:#3b9eff;font-weight:600;margin-bottom:6px}
+.box p{font-size:11px;color:#94a3b8}
+.box.blue{border-color:#3b82f6}
+.box.green{border-color:#10b981}
+.box.purple{border-color:#7c3aed}
+.box.amber{border-color:#f59e0b}
+.box.red{border-color:#ef4444}
+.arrow-row{display:flex;justify-content:center;gap:40px;margin:8px 0}
+.arrow{color:#475569;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.arrow span{font-size:10px;color:#64748b}
+.protocol{display:inline-block;background:#1e293b;color:#94a3b8;padding:2px 8px;border-radius:4px;font-size:10px;margin:4px 0}
+</style>
+</head>
+<body>
+<h1>🏗️ System Architecture — The Fat Milk</h1>
+<p class="sub">Modular Monolith · Clean Architecture · 1 chi nhánh (mở rộng được)</p>
+
+<div class="canvas">
+
+<!-- LAYER 1: CLIENTS -->
+<div class="layer">
+<div class="layer-title" style="color:#3b82f6">👥 CLIENTS</div>
+<div class="boxes">
+  <div class="box blue">
+    <h3>📱 PWA App</h3>
+    <div class="tech">Next.js 14 + Tailwind</div>
+    <p>Khách hàng<br>Mobile-first, Service Workers<br>Offline mode</p>
+  </div>
+  <div class="box blue">
+    <h3>💳 POS Terminal</h3>
+    <div class="tech">Next.js 14 + Tailwind</div>
+    <p>Nhân viên chi nhánh<br>Barcode Scanner<br>Máy in K80/K57</p>
+  </div>
+  <div class="box blue">
+    <h3>⚙️ Admin Panel</h3>
+    <div class="tech">Next.js 14 + Tailwind</div>
+    <p>Chủ chuỗi<br>Responsive mobile<br>Dashboard + Reports</p>
+  </div>
+</div>
+</div>
+
+<div class="arrow-row">
+  <div class="arrow">↕<span class="protocol">HTTPS / REST API / JWT</span></div>
+</div>
+
+<!-- LAYER 2: BACKEND -->
+<div class="layer">
+<div class="layer-title" style="color:#10b981">⚡ BACKEND API</div>
+<div class="boxes">
+  <div class="box green">
+    <h3>🔐 Auth</h3>
+    <div class="tech">Express.js</div>
+    <p>JWT + OTP<br>RBAC Middleware</p>
+  </div>
+  <div class="box green">
+    <h3>🛒 Order</h3>
+    <div class="tech">Express.js</div>
+    <p>Queue Processing<br>Row-level Lock</p>
+  </div>
+  <div class="box green">
+    <h3>💰 Wallet</h3>
+    <div class="tech">Express.js</div>
+    <p>DB Transaction<br>Idempotency Key</p>
+  </div>
+  <div class="box green">
+    <h3>📦 Product</h3>
+    <div class="tech">Express.js</div>
+    <p>CRUD + Gallery<br>Combo, Seasonal</p>
+  </div>
+  <div class="box green">
+    <h3>👑 CRM</h3>
+    <div class="tech">Express.js</div>
+    <p>Tier Engine<br>Thăng/Xuống hạng</p>
+  </div>
+  <div class="box green">
+    <h3>🎫 Voucher</h3>
+    <div class="tech">Express.js</div>
+    <p>Targeted Marketing<br>Flash Sale</p>
+  </div>
+</div>
+</div>
+
+<div class="arrow-row">
+  <div class="arrow">↕<span class="protocol">Prisma ORM / SQL</span></div>
+  <div class="arrow">↕<span class="protocol">Redis Protocol</span></div>
+  <div class="arrow">↕<span class="protocol">Filesystem I/O</span></div>
+</div>
+
+<!-- LAYER 3: DATA -->
+<div class="layer">
+<div class="layer-title" style="color:#7c3aed">💾 DATA LAYER</div>
+<div class="boxes">
+  <div class="box purple">
+    <h3>🐘 PostgreSQL 16</h3>
+    <div class="tech">Primary Database</div>
+    <p>23 tables · ACID<br>Row-level Locking<br>JSONB support</p>
+  </div>
+  <div class="box purple">
+    <h3>⚡ Redis 7</h3>
+    <div class="tech">Cache + Session</div>
+    <p>OTP temp store (TTL)<br>Rate limiting<br>Session management</p>
+  </div>
+  <div class="box purple">
+    <h3>📁 Local Disk</h3>
+    <div class="tech">File Storage</div>
+    <p>Product gallery<br>Avatar upload<br>/uploads/ (Nginx static)</p>
+  </div>
+</div>
+</div>
+
+<div class="arrow-row">
+  <div class="arrow">↕<span class="protocol">Webhook HTTPS</span></div>
+  <div class="arrow">↕<span class="protocol">SMS API</span></div>
+</div>
+
+<!-- LAYER 4: EXTERNAL -->
+<div class="layer">
+<div class="layer-title" style="color:#f59e0b">🌐 EXTERNAL SERVICES</div>
+<div class="boxes">
+  <div class="box amber">
+    <h3>💳 SePay</h3>
+    <div class="tech">Payment Gateway</div>
+    <p>QR Code động<br>Webhook xác nhận<br>HMAC Signature</p>
+  </div>
+  <div class="box amber">
+    <h3>📲 OTP Service</h3>
+    <div class="tech">Twilio / Firebase</div>
+    <p>SMS Verification<br>Đăng ký + Reset PW</p>
+  </div>
+  <div class="box amber">
+    <h3>🚚 Delivery</h3>
+    <div class="tech">External Booking</div>
+    <p>Grab / AhaMove<br>(Book thủ công)</p>
+  </div>
+</div>
+</div>
+
+<!-- INFRA -->
+<div class="layer" style="border-color:#ef4444">
+<div class="layer-title" style="color:#ef4444">🛡️ INFRASTRUCTURE</div>
+<div class="boxes">
+  <div class="box red">
+    <h3>Nginx</h3>
+    <div class="tech">Reverse Proxy</div>
+    <p>SSL Termination<br>HSTS · CORS</p>
+  </div>
+  <div class="box red">
+    <h3>Docker</h3>
+    <div class="tech">Containerization</div>
+    <p>Docker Compose<br>Dev/Staging/Prod</p>
+  </div>
+  <div class="box red">
+    <h3>GitHub Actions</h3>
+    <div class="tech">CI/CD</div>
+    <p>Auto Test · Build<br>Deploy Pipeline</p>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

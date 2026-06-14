@@ -1,0 +1,15 @@
+# Anti-Gravity Agent Framework — Python Dependencies
+# Cài đặt: pip install -r requirements.txt
+
+# ── Xử lý file tài liệu đầu vào ──────────────────────────────────────────
+python-docx>=1.1.0      #  Đọc file .docx (SRS, BRD)
+pandas>=2.2.0           # Đọc file .xlsx, .csv
+openpyxl>=3.1.0         # Engine đọc .xlsx cho pandas
+
+# ── Standard library (không cần cài thêm) ────────────────────────────────
+# os, shutil, argparse, logging, re, time, datetime — có sẵn trong Python 3.8+
+
+# ── Tuỳ chọn: nếu tích hợp LLM API thật ─────────────────────────────────
+# google-generativeai>=0.8.0   # Gemini API
+# anthropic>=0.25.0            # Claude API
+# openai>=1.30.0               # OpenAI API

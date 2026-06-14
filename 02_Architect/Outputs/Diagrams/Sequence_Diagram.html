@@ -1,0 +1,118 @@
+<!-- MÔ TẢ: Sequence Diagram — THE FAT MILK. Luồng gọi API cho 3 use-case chính: Đặt hàng Online, Nạp ví SePay, POS bán hàng. HTML/CSS layout, dark theme. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sequence Diagram — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;padding:24px}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px}
+.sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:24px}
+.sequence{background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:20px;margin-bottom:24px;max-width:1100px;margin-left:auto;margin-right:auto}
+.seq-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.badge{background:#3b9eff;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px}
+.actors{display:flex;justify-content:space-between;margin-bottom:12px;position:relative}
+.actor{text-align:center;min-width:100px;z-index:1}
+.actor-box{background:#1e293b;border:1.5px solid #334155;border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600}
+.actor-box.client{border-color:#3b82f6;color:#93c5fd}
+.actor-box.api{border-color:#10b981;color:#6ee7b7}
+.actor-box.service{border-color:#7c3aed;color:#c4b5fd}
+.actor-box.db{border-color:#f59e0b;color:#fcd34d}
+.actor-box.ext{border-color:#ef4444;color:#fca5a5}
+.steps{display:flex;flex-direction:column;gap:4px}
+.step{display:flex;align-items:center;padding:6px 8px;border-radius:6px;font-size:11px;transition:background .2s}
+.step:hover{background:#111827}
+.step-num{min-width:28px;color:#3b9eff;font-weight:700;font-size:10px}
+.step-from{min-width:100px;color:#64748b;font-size:10px}
+.step-arrow{min-width:40px;color:#475569;text-align:center}
+.step-to{min-width:100px;color:#64748b;font-size:10px}
+.step-desc{flex:1;padding-left:12px}
+.step-desc .method{color:#10b981;font-weight:600;font-size:10px;margin-right:4px}
+.step-desc .critical{color:#ef4444;font-weight:600}
+.step-desc .lock{color:#f59e0b;font-size:10px}
+.divider{border:none;border-top:1px dashed #1e3a5f;margin:8px 0}
+.note{font-size:10px;color:#64748b;padding:4px 8px 4px 40px;font-style:italic}
+</style>
+</head>
+<body>
+<h1>🔄 Sequence Diagram — The Fat Milk</h1>
+<p class="sub">Luồng gọi API cho 3 use-case chính theo Clean Architecture</p>
+
+<!-- USE CASE 1: Online Order -->
+<div class="sequence">
+<div class="seq-title"><span class="badge">UC-1</span> Khách đặt hàng Online (PWA)</div>
+<div class="actors">
+  <div class="actor"><div class="actor-box client">PWA Client</div></div>
+  <div class="actor"><div class="actor-box api">OrderController</div></div>
+  <div class="actor"><div class="actor-box service">OrderService</div></div>
+  <div class="actor"><div class="actor-box db">PostgreSQL</div></div>
+</div>
+<div class="steps">
+  <div class="step"><span class="step-num">1</span><span class="step-from">PWA</span><span class="step-arrow">→</span><span class="step-to">Controller</span><span class="step-desc"><span class="method">POST</span>/api/orders { items, payment, voucher, delivery }</span></div>
+  <div class="step"><span class="step-num">2</span><span class="step-from">Controller</span><span class="step-arrow">→</span><span class="step-to">Service</span><span class="step-desc">Validate input (Zod), extract JWT user</span></div>
+  <div class="step"><span class="step-num">3</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc"><span class="critical">BEGIN TRANSACTION</span></span></div>
+  <div class="step"><span class="step-num">4</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">SELECT stock FROM inventory <span class="lock">FOR UPDATE</span> (lock rows)</span></div>
+  <div class="step"><span class="step-num">5</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">Check stock ≥ quantity → nếu không: ROLLBACK, ERR_OUT_OF_STOCK</span></div>
+  <div class="step"><span class="step-num">6</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">Validate voucher (hạn, hạng, chi nhánh, usage_limit)</span></div>
+  <div class="step"><span class="step-num">7</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">Tính final_total = subtotal - tier_discount - voucher - points</span></div>
+  <div class="step"><span class="step-num">8</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">Nếu payment=wallet: SELECT balance FROM wallets <span class="lock">FOR UPDATE</span></span></div>
+  <div class="step"><span class="step-num">9</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">UPDATE wallet SET balance = balance - total (check ≥ 0)</span></div>
+  <div class="step"><span class="step-num">10</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">UPDATE inventory SET stock = stock - quantity</span></div>
+  <div class="step"><span class="step-num">11</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">INSERT orders + order_items + wallet_tx + points_ledger</span></div>
+  <div class="step"><span class="step-num">12</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc"><span class="critical">COMMIT</span></span></div>
+  <div class="step"><span class="step-num">13</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">Service</span><span class="step-desc">Event: NotificationService.send(order_created)</span></div>
+  <div class="step"><span class="step-num">14</span><span class="step-from">Controller</span><span class="step-arrow">←</span><span class="step-to">Service</span><span class="step-desc">Return order object</span></div>
+  <div class="step"><span class="step-num">15</span><span class="step-from">PWA</span><span class="step-arrow">←</span><span class="step-to">Controller</span><span class="step-desc">200 OK { order: { id, number, total, status } }</span></div>
+</div>
+</div>
+
+<!-- USE CASE 2: SePay Topup -->
+<div class="sequence">
+<div class="seq-title"><span class="badge" style="background:#8b5cf6">UC-2</span> Nạp ví qua SePay Webhook</div>
+<div class="actors">
+  <div class="actor"><div class="actor-box ext">SePay</div></div>
+  <div class="actor"><div class="actor-box api">WebhookController</div></div>
+  <div class="actor"><div class="actor-box service">WalletService</div></div>
+  <div class="actor"><div class="actor-box db">PostgreSQL</div></div>
+</div>
+<div class="steps">
+  <div class="step"><span class="step-num">1</span><span class="step-from">SePay</span><span class="step-arrow">→</span><span class="step-to">Controller</span><span class="step-desc"><span class="method">POST</span>/api/webhook/sepay { id, amount, content, signature }</span></div>
+  <div class="step"><span class="step-num">2</span><span class="step-from">Controller</span><span class="step-arrow">→</span><span class="step-to">Controller</span><span class="step-desc">Verify HMAC signature → nếu sai: 400 ERR_SEPAY_SIGNATURE</span></div>
+  <div class="step"><span class="step-num">3</span><span class="step-from">Controller</span><span class="step-arrow">→</span><span class="step-to">Service</span><span class="step-desc">Parse content "TFM NAPVI 0901234567" → extract phone</span></div>
+  <div class="step"><span class="step-num">4</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">Check idempotency: sepay_transaction_id đã tồn tại? → skip</span></div>
+  <div class="step"><span class="step-num">5</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc"><span class="critical">BEGIN TRANSACTION</span></span></div>
+  <div class="step"><span class="step-num">6</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">SELECT balance FROM wallets WHERE user.phone = X <span class="lock">FOR UPDATE</span></span></div>
+  <div class="step"><span class="step-num">7</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">UPDATE wallet SET balance = balance + amount</span></div>
+  <div class="step"><span class="step-num">8</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc">INSERT wallet_transactions + sepay_transactions</span></div>
+  <div class="step"><span class="step-num">9</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">DB</span><span class="step-desc"><span class="critical">COMMIT</span></span></div>
+  <div class="step"><span class="step-num">10</span><span class="step-from">Service</span><span class="step-arrow">→</span><span class="step-to">Service</span><span class="step-desc">NotificationService.send(wallet_topup)</span></div>
+  <div class="step"><span class="step-num">11</span><span class="step-from">Controller</span><span class="step-arrow">←</span><span class="step-to">Service</span><span class="step-desc">200 OK (bắt buộc trả 200 để SePay không retry)</span></div>
+</div>
+</div>
+
+<!-- USE CASE 3: POS -->
+<div class="sequence">
+<div class="seq-title"><span class="badge" style="background:#10b981">UC-3</span> Nhân viên bán hàng tại POS</div>
+<div class="actors">
+  <div class="actor"><div class="actor-box client">POS Client</div></div>
+  <div class="actor"><div class="actor-box api">Controller</div></div>
+  <div class="actor"><div class="actor-box service">Services</div></div>
+  <div class="actor"><div class="actor-box db">PostgreSQL</div></div>
+</div>
+<div class="steps">
+  <div class="step"><span class="step-num">1</span><span class="step-from">POS</span><span class="step-arrow">→</span><span class="step-to">Controller</span><span class="step-desc"><span class="method">GET</span>/api/crm/lookup?phone=0901234567 (tra CRM)</span></div>
+  <div class="step"><span class="step-num">2</span><span class="step-from">Controller</span><span class="step-arrow">←</span><span class="step-to">DB</span><span class="step-desc">Return: tên, hạng, ví, điểm → POS hiển thị</span></div>
+  <div class="step"><span class="step-num">3</span><span class="step-from">POS</span><span class="step-arrow">→</span><span class="step-to">Controller</span><span class="step-desc"><span class="method">GET</span>/api/products?branch_id=X (quét barcode / tìm SP)</span></div>
+  <div class="step"><span class="step-num">4</span><span class="step-from">POS</span><span class="step-arrow">→</span><span class="step-to">POS</span><span class="step-desc">Staff chọn SP, áp chiết khấu hạng, nhập voucher</span></div>
+  <div class="step"><span class="step-num">5</span><span class="step-from">POS</span><span class="step-arrow">→</span><span class="step-to">Controller</span><span class="step-desc"><span class="method">POST</span>/api/orders { source: "pos", staff_id, items, payment }</span></div>
+  <div class="step"><span class="step-num">6</span><span class="step-from">Controller</span><span class="step-arrow">→</span><span class="step-to">Service</span><span class="step-desc">→ OrderService (same flow as UC-1 steps 3-12)</span></div>
+  <div class="note">⚡ Nếu payment=wallet: yêu cầu khách xác nhận bằng mã OTP hoặc quét QR ví</div>
+  <div class="step"><span class="step-num">7</span><span class="step-from">POS</span><span class="step-arrow">←</span><span class="step-to">Controller</span><span class="step-desc">200 OK { order } → POS gọi printer adapter → In hóa đơn K80</span></div>
+</div>
+</div>
+
+</body>
+</html>

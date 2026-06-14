@@ -1,0 +1,141 @@
+<!-- MÔ TẢ: Business Flow Diagram — THE FAT MILK. Luồng nghiệp vụ end-to-end: Đặt hàng Online (PWA) và Bán hàng Offline (POS), bao gồm CRM, Ví, Điểm, Kho. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Flow Diagram — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;padding:24px;overflow-x:auto}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px}
+.subtitle{text-align:center;font-size:13px;color:#64748b;margin-bottom:28px}
+.flows{display:flex;flex-direction:column;gap:40px;max-width:1100px;margin:0 auto}
+.flow-section{background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:24px}
+.flow-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.flow-title .badge{background:#3b9eff;color:#fff;font-size:11px;padding:3px 10px;border-radius:20px}
+.flow-title .badge-green{background:#10b981}
+.steps{display:flex;align-items:flex-start;gap:0;flex-wrap:wrap;justify-content:center}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:120px;max-width:140px;text-align:center}
+.step-box{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:10px 12px;font-size:11px;font-weight:500;min-height:52px;display:flex;align-items:center;justify-content:center;width:130px;transition:all .2s}
+.step-box:hover{border-color:#3b9eff;background:#162032}
+.step-box.start{background:#0d3b2e;border-color:#10b981;color:#6ee7b7;border-radius:24px}
+.step-box.end{background:#1a0d2e;border-color:#8b5cf6;color:#c4b5fd;border-radius:24px}
+.step-box.decision{background:#2d1f0e;border-color:#f59e0b;color:#fcd34d;transform:rotate(0deg);border-radius:4px}
+.step-box.critical{background:#1f0d0d;border-color:#ef4444;color:#fca5a5}
+.step-box.integration{background:#0d1f3b;border-color:#3b82f6;color:#93c5fd;border-style:dashed}
+.step-label{font-size:9px;color:#64748b;max-width:130px}
+.arrow{display:flex;align-items:center;justify-content:center;min-width:30px;color:#475569;font-size:18px;padding-top:10px}
+.arrow-down{color:#475569;font-size:14px;text-align:center;padding:4px 0}
+.branch-container{display:flex;gap:20px;justify-content:center;margin:12px 0}
+.branch{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;background:#111827;border:1px solid #1e3a5f;border-radius:8px}
+.branch-label{font-size:10px;color:#94a3b8;font-weight:600}
+.legend{display:flex;gap:20px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b}
+.legend-dot{width:12px;height:12px;border-radius:3px;border:1.5px solid}
+</style>
+</head>
+<body>
+<h1>🔄 Business Flow Diagram — The Fat Milk</h1>
+<p class="subtitle">Luồng nghiệp vụ end-to-end: Đặt hàng Online (PWA) & Bán hàng Offline (POS)</p>
+
+<div class="flows">
+
+<!-- FLOW 1: Online Order -->
+<div class="flow-section">
+<div class="flow-title"><span class="badge">FLOW 1</span> Khách hàng đặt hàng Online (PWA)</div>
+<div class="steps">
+  <div class="step"><div class="step-box start">Mở App PWA</div><div class="step-label">Mobile browser</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Chọn Chi nhánh</div><div class="step-label">Geolocation / thủ công</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Duyệt Menu</div><div class="step-label">Giá theo hạng VIP</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Thêm vào Giỏ</div><div class="step-label">Ghi chú: ít đường...</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box decision">Áp ưu đãi?</div><div class="step-label">Hạng + Voucher + Điểm</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Chọn Thanh toán</div><div class="step-label">Ví / COD / QR</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box critical">Xử lý giao dịch</div><div class="step-label">DB Lock + Transaction</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box end">Đơn hàng tạo ✓</div><div class="step-label">Trừ kho + Thông báo</div></div>
+</div>
+</div>
+
+<!-- FLOW 2: POS -->
+<div class="flow-section">
+<div class="flow-title"><span class="badge badge-green">FLOW 2</span> Nhân viên bán hàng tại quầy (POS)</div>
+<div class="steps">
+  <div class="step"><div class="step-box start">Mở POS</div><div class="step-label">Giao diện chi nhánh</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Quét Barcode</div><div class="step-label">hoặc tìm kiếm SP</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Nhập SĐT khách</div><div class="step-label">Tra CRM</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box decision">Có thành viên?</div><div class="step-label">Hạng + Ví + Điểm</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Áp chiết khấu</div><div class="step-label">Tự động theo hạng</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Trừ Ví / Điểm</div><div class="step-label">Mã xác nhận / QR</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box critical">Xử lý giao dịch</div><div class="step-label">DB Lock + Trừ kho</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box end">In hóa đơn ✓</div><div class="step-label">K80/K57</div></div>
+</div>
+</div>
+
+<!-- FLOW 3: Nạp ví -->
+<div class="flow-section">
+<div class="flow-title"><span class="badge" style="background:#8b5cf6">FLOW 3</span> Nạp tiền Ví thành viên (SePay)</div>
+<div class="steps">
+  <div class="step"><div class="step-box start">Bấm "Nạp tiền"</div><div class="step-label">Trang Cá nhân</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Nhập số tiền</div><div class="step-label">VD: 200.000đ</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box integration">SePay tạo QR</div><div class="step-label">API tạo mã QR động</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Hiển thị QR</div><div class="step-label">Có sẵn STK + nội dung</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Khách CK ngân hàng</div><div class="step-label">Quét QR bằng app NH</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box integration">SePay Webhook</div><div class="step-label">Xác thực signature</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box critical">Cộng số dư Ví</div><div class="step-label">DB Transaction</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box end">Thông báo ✓</div><div class="step-label">Nạp thành công</div></div>
+</div>
+</div>
+
+<!-- FLOW 4: Thăng hạng -->
+<div class="flow-section">
+<div class="flow-title"><span class="badge" style="background:#f59e0b">FLOW 4</span> Thăng hạng thành viên tự động</div>
+<div class="steps">
+  <div class="step"><div class="step-box start">Đơn → "Đã giao"</div><div class="step-label">Trigger event</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Cộng total_spent</div><div class="step-label">SUM đơn đã giao</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box">Tính điểm thưởng</div><div class="step-label">FLOOR(amount/100K)×10</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box decision">Đủ ngưỡng?</div><div class="step-label">2M/5M/10M VND</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box" style="border-color:#f59e0b;color:#fcd34d">Thăng hạng ↑</div><div class="step-label">Bronze→Silver→Gold→Diamond</div></div>
+  <div class="arrow">→</div>
+  <div class="step"><div class="step-box end">Thông báo khách ✓</div><div class="step-label">Push notification</div></div>
+</div>
+</div>
+
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#0d3b2e;border-color:#10b981"></div>Bắt đầu</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1e293b;border-color:#334155"></div>Bước xử lý</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#2d1f0e;border-color:#f59e0b"></div>Quyết định</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1f0d0d;border-color:#ef4444"></div>Bước Critical (DB Lock)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#0d1f3b;border-color:#3b82f6;border-style:dashed"></div>Tích hợp SePay</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#1a0d2e;border-color:#8b5cf6"></div>Kết thúc</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!-- MÔ TẢ: Feature Priority Matrix — THE FAT MILK. Ma trận ưu tiên MoSCoW với 58 Functional + 13 Non-Functional requirements. Bảng tương tác có màu, filter theo module. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feature Priority Matrix — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;padding:24px}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px}
+.subtitle{text-align:center;font-size:13px;color:#64748b;margin-bottom:20px}
+
+.stats{display:flex;gap:16px;justify-content:center;margin-bottom:24px;flex-wrap:wrap}
+.stat{background:#0f172a;border:1px solid #1e3a5f;border-radius:10px;padding:14px 24px;text-align:center;min-width:120px}
+.stat-value{font-size:28px;font-weight:700}
+.stat-label{font-size:11px;color:#64748b;margin-top:2px}
+.stat.must .stat-value{color:#ef4444}
+.stat.should .stat-value{color:#f59e0b}
+.stat.could .stat-value{color:#3b82f6}
+.stat.total .stat-value{color:#3b9eff}
+
+.filters{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{background:#1e293b;border:1px solid #334155;color:#94a3b8;padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{background:#3b9eff;color:#fff;border-color:#3b9eff}
+
+.table-container{overflow-x:auto;max-width:1100px;margin:0 auto}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#0f172a;color:#3b9eff;padding:10px 12px;text-align:left;font-weight:600;border-bottom:2px solid #1e3a5f;position:sticky;top:0}
+td{padding:8px 12px;border-bottom:1px solid #1e293b;vertical-align:top}
+tr:hover{background:#111827}
+tr.hidden{display:none}
+
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:10px;font-weight:600}
+.badge-must{background:#3b1111;color:#fca5a5;border:1px solid #ef4444}
+.badge-should{background:#3b2e11;color:#fcd34d;border:1px solid #f59e0b}
+.badge-could{background:#11253b;color:#93c5fd;border:1px solid #3b82f6}
+
+.module-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:500;background:#1e293b;color:#94a3b8;border:1px solid #334155}
+
+.summary{max-width:1100px;margin:24px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.summary-card{background:#0f172a;border:1px solid #1e3a5f;border-radius:10px;padding:16px}
+.summary-card h3{font-size:13px;color:#3b9eff;margin-bottom:8px}
+.bar{height:8px;background:#1e293b;border-radius:4px;overflow:hidden;margin-top:4px}
+.bar-fill{height:100%;border-radius:4px;transition:width .5s}
+.bar-fill.must{background:#ef4444}
+.bar-fill.should{background:#f59e0b}
+.bar-fill.could{background:#3b82f6}
+</style>
+</head>
+<body>
+<h1>📊 Feature Priority Matrix — The Fat Milk</h1>
+<p class="subtitle">MoSCoW Prioritization — 58 Functional + 13 Non-Functional Requirements</p>
+
+<div class="stats">
+  <div class="stat must"><div class="stat-value">46</div><div class="stat-label">MUST HAVE</div></div>
+  <div class="stat should"><div class="stat-value">13</div><div class="stat-label">SHOULD HAVE</div></div>
+  <div class="stat could"><div class="stat-value">2</div><div class="stat-label">COULD HAVE</div></div>
+  <div class="stat total"><div class="stat-value">61</div><div class="stat-label">TỔNG CỘNG</div></div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filterModule('all')">Tất cả</button>
+  <button class="filter-btn" onclick="filterModule('pwa-ui')">PWA Giao diện</button>
+  <button class="filter-btn" onclick="filterModule('pwa-account')">PWA Tài khoản</button>
+  <button class="filter-btn" onclick="filterModule('cart')">Giỏ hàng</button>
+  <button class="filter-btn" onclick="filterModule('pos')">POS</button>
+  <button class="filter-btn" onclick="filterModule('admin')">Admin</button>
+  <button class="filter-btn" onclick="filterModule('core')">Core System</button>
+  <button class="filter-btn" onclick="filterModule('nf')">Non-Functional</button>
+</div>
+
+<div class="table-container">
+<table id="matrix">
+<thead>
+<tr>
+  <th style="width:90px">Mã</th>
+  <th style="width:100px">Module</th>
+  <th>Tính năng</th>
+  <th style="width:90px">Priority</th>
+  <th style="width:60px">Sprint</th>
+</tr>
+</thead>
+<tbody>
+<!-- PWA UI -->
+<tr data-module="pwa-ui"><td>REQ-F-001</td><td><span class="module-tag">PWA UI</span></td><td>Cài đặt PWA lên màn hình chính</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-002</td><td><span class="module-tag">PWA UI</span></td><td>Standalone Mode (fullscreen)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-003</td><td><span class="module-tag">PWA UI</span></td><td>Service Workers + Offline Mode</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-004</td><td><span class="module-tag">PWA UI</span></td><td>Header: Logo + Search + Cart icon</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-005</td><td><span class="module-tag">PWA UI</span></td><td>Chọn chi nhánh + Geolocation</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-006</td><td><span class="module-tag">PWA UI</span></td><td>Banner Slider khuyến mãi</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-007</td><td><span class="module-tag">PWA UI</span></td><td>Thẻ VIP Quick View trên trang chủ</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-008</td><td><span class="module-tag">PWA UI</span></td><td>Flash Sale + đồng hồ đếm ngược</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-009</td><td><span class="module-tag">PWA UI</span></td><td>Danh mục nhanh (icon tròn)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-010</td><td><span class="module-tag">PWA UI</span></td><td>Product Feed 2 cột + allergens tag</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-011</td><td><span class="module-tag">PWA UI</span></td><td>Bottom Navigation Bar (4 tab)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-ui"><td>REQ-F-012</td><td><span class="module-tag">PWA UI</span></td><td>Trang Danh mục sản phẩm</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+
+<!-- PWA Account -->
+<tr data-module="pwa-account"><td>REQ-F-013</td><td><span class="module-tag">Tài khoản</span></td><td>Thông báo (đơn hàng, ví, VIP)</td><td><span class="badge badge-must">Must</span></td><td>S2</td></tr>
+<tr data-module="pwa-account"><td>REQ-F-014</td><td><span class="module-tag">Tài khoản</span></td><td>Trang Cá nhân + Progress bar hạng</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-account"><td>REQ-F-015</td><td><span class="module-tag">Tài khoản</span></td><td>Ví thành viên + Nạp tiền QR SePay</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-account"><td>REQ-F-016</td><td><span class="module-tag">Tài khoản</span></td><td>Nạp ví tự động (SePay Webhook)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-account"><td>REQ-F-017</td><td><span class="module-tag">Tài khoản</span></td><td>Điểm thưởng + lịch sử</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-account"><td>REQ-F-018</td><td><span class="module-tag">Tài khoản</span></td><td>Lịch sử đơn hàng + lọc trạng thái</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pwa-account"><td>REQ-F-019</td><td><span class="module-tag">Tài khoản</span></td><td>Kho Voucher cá nhân</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+
+<!-- Cart -->
+<tr data-module="cart"><td>REQ-F-020</td><td><span class="module-tag">Giỏ hàng</span></td><td>Thêm/sửa/xóa SP trong giỏ</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="cart"><td>REQ-F-021</td><td><span class="module-tag">Giỏ hàng</span></td><td>Giảm giá tự động theo hạng VIP</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="cart"><td>REQ-F-022</td><td><span class="module-tag">Giỏ hàng</span></td><td>Áp dụng mã Voucher</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="cart"><td>REQ-F-023</td><td><span class="module-tag">Giỏ hàng</span></td><td>Dùng Điểm thưởng giảm giá</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="cart"><td>REQ-F-024</td><td><span class="module-tag">Giỏ hàng</span></td><td>Ghi chú đơn hàng (ít đường...)</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="cart"><td>REQ-F-025</td><td><span class="module-tag">Giỏ hàng</span></td><td>Thanh toán bằng Ví thành viên</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="cart"><td>REQ-F-026</td><td><span class="module-tag">Giỏ hàng</span></td><td>Thanh toán COD</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="cart"><td>REQ-F-027</td><td><span class="module-tag">Giỏ hàng</span></td><td>Thanh toán QR SePay</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+
+<!-- POS -->
+<tr data-module="pos"><td>REQ-F-028</td><td><span class="module-tag">POS</span></td><td>Giao diện POS 1 màn hình</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pos"><td>REQ-F-029</td><td><span class="module-tag">POS</span></td><td>Tìm kiếm / Quét Barcode</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pos"><td>REQ-F-030</td><td><span class="module-tag">POS</span></td><td>Tra CRM khách bằng SĐT</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pos"><td>REQ-F-031</td><td><span class="module-tag">POS</span></td><td>Áp chiết khấu theo hạng</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pos"><td>REQ-F-032</td><td><span class="module-tag">POS</span></td><td>Trừ Ví / Điểm tại quầy</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="pos"><td>REQ-F-033</td><td><span class="module-tag">POS</span></td><td>In hóa đơn K80/K57</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+
+<!-- Admin -->
+<tr data-module="admin"><td>REQ-F-034</td><td><span class="module-tag">Admin</span></td><td>CRUD chi nhánh</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-035</td><td><span class="module-tag">Admin</span></td><td>CRUD sản phẩm + thuộc tính F&B</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-036</td><td><span class="module-tag">Admin</span></td><td>SP theo mùa / Limited edition</td><td><span class="badge badge-could">Could</span></td><td>S3</td></tr>
+<tr data-module="admin"><td>REQ-F-037</td><td><span class="module-tag">Admin</span></td><td>Combo / Bundle</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="admin"><td>REQ-F-038</td><td><span class="module-tag">Admin</span></td><td>Tồn kho theo chi nhánh + XNT</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-039</td><td><span class="module-tag">Admin</span></td><td>Phiếu chuyển kho</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="admin"><td>REQ-F-040</td><td><span class="module-tag">Admin</span></td><td>Quản lý đơn hàng toàn chuỗi</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-041</td><td><span class="module-tag">Admin</span></td><td>Cấu hình hạng + chiết khấu</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-042</td><td><span class="module-tag">Admin</span></td><td>Thăng hạng tự động</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-043</td><td><span class="module-tag">Admin</span></td><td>Đối soát Ví + SePay</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-044</td><td><span class="module-tag">Admin</span></td><td>Cấu hình tỷ lệ tích/tiêu điểm</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-045</td><td><span class="module-tag">Admin</span></td><td>Tạo Voucher targeted</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="admin"><td>REQ-F-046</td><td><span class="module-tag">Admin</span></td><td>Tạo Flash Sale</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="admin"><td>REQ-F-047</td><td><span class="module-tag">Admin</span></td><td>Biểu đồ doanh thu / chi nhánh</td><td><span class="badge badge-must">Must</span></td><td>S2</td></tr>
+<tr data-module="admin"><td>REQ-F-048</td><td><span class="module-tag">Admin</span></td><td>Thống kê SP bán chạy</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+<tr data-module="admin"><td>REQ-F-049</td><td><span class="module-tag">Admin</span></td><td>Báo cáo ví tổng (đối soát)</td><td><span class="badge badge-must">Must</span></td><td>S2</td></tr>
+<tr data-module="admin"><td>REQ-F-050</td><td><span class="module-tag">Admin</span></td><td>Quản lý nhân viên + phân quyền</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+
+<!-- Core -->
+<tr data-module="core"><td>REQ-F-051</td><td><span class="module-tag">Core</span></td><td>Đăng ký / Đăng nhập / Quên MK</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-052</td><td><span class="module-tag">Core</span></td><td>RBAC: Admin / Staff / Customer</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-053</td><td><span class="module-tag">Core</span></td><td>Tính total_spent cho phân hạng</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-054</td><td><span class="module-tag">Core</span></td><td>Tính điểm thưởng</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-055</td><td><span class="module-tag">Core</span></td><td>Quy đổi điểm → tiền</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-056</td><td><span class="module-tag">Core</span></td><td>Tính tổng thanh toán (combo ưu đãi)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-057</td><td><span class="module-tag">Core</span></td><td>Chống Over-selling (Queue + Lock)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="core"><td>REQ-F-058</td><td><span class="module-tag">Core</span></td><td>Bảo mật Ví (Transaction + Lock)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+
+<!-- Non-Functional -->
+<tr data-module="nf"><td>REQ-NF-001</td><td><span class="module-tag">Security</span></td><td>HTTPS bắt buộc</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-002</td><td><span class="module-tag">Security</span></td><td>Hash password (bcrypt/argon2)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-003</td><td><span class="module-tag">Security</span></td><td>Token verification API tài chính</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-004</td><td><span class="module-tag">Security</span></td><td>SePay Webhook signature verify</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-005</td><td><span class="module-tag">Perf</span></td><td>Page load < 2 giây</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-006</td><td><span class="module-tag">Perf</span></td><td>SePay Webhook xử lý nhanh</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-007</td><td><span class="module-tag">Perf</span></td><td>Offline Mode (Service Workers)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-008</td><td><span class="module-tag">Sync</span></td><td>Real-time sync Online/Offline</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-009</td><td><span class="module-tag">Data</span></td><td>Ví không âm (mọi trường hợp)</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-010</td><td><span class="module-tag">Compat</span></td><td>iOS Safari + Android Chrome</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-011</td><td><span class="module-tag">Hardware</span></td><td>Barcode scanner + Máy in nhiệt</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-012</td><td><span class="module-tag">Design</span></td><td>Mobile-First responsive</td><td><span class="badge badge-must">Must</span></td><td>S1</td></tr>
+<tr data-module="nf"><td>REQ-NF-013</td><td><span class="module-tag">Scale</span></td><td>Multi-branch mở rộng dễ</td><td><span class="badge badge-should">Should</span></td><td>S2</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="summary">
+  <div class="summary-card">
+    <h3>Sprint 1 — MVP Core</h3>
+    <div style="font-size:12px;color:#94a3b8">42 requirements (Must)</div>
+    <div class="bar"><div class="bar-fill must" style="width:68%"></div></div>
+  </div>
+  <div class="summary-card">
+    <h3>Sprint 2 — Enhancement</h3>
+    <div style="font-size:12px;color:#94a3b8">17 requirements (Should + báo cáo)</div>
+    <div class="bar"><div class="bar-fill should" style="width:28%"></div></div>
+  </div>
+  <div class="summary-card">
+    <h3>Sprint 3 — Nice to Have</h3>
+    <div style="font-size:12px;color:#94a3b8">2 requirements (Could)</div>
+    <div class="bar"><div class="bar-fill could" style="width:4%"></div></div>
+  </div>
+</div>
+
+<script>
+function filterModule(mod){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('#matrix tbody tr').forEach(r=>{
+    if(mod==='all')r.classList.remove('hidden');
+    else r.classList.toggle('hidden',r.dataset.module!==mod);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Logs
+logs/
+*.log
+
+# Runtime outputs (không cần track vào git — mỗi dự án tự sinh ra)
+*/Memory/experience.md
+# Uncomment nếu muốn ignore luôn Outputs trung gian:
+# */Outputs/
+
+# macOS metadata
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

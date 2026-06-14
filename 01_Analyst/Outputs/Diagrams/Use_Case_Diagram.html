@@ -1,0 +1,203 @@
+<!-- MÔ TẢ: Use Case Diagram — THE FAT MILK. Hiển thị 3 Actor (Customer, Staff, Admin) và các Use Case chính của hệ thống. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Use Case Diagram — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;overflow-x:auto;padding:24px}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px;font-weight:700}
+.subtitle{text-align:center;font-size:13px;color:#64748b;margin-bottom:28px}
+.canvas{width:1200px;margin:0 auto;position:relative}
+svg{width:100%;height:auto}
+.actor-label{font-size:13px;fill:#3b9eff;font-weight:600;text-anchor:middle}
+.actor-icon{fill:none;stroke:#3b9eff;stroke-width:2}
+.uc-ellipse{fill:#111827;stroke:#334155;stroke-width:1.5;rx:8;ry:8}
+.uc-ellipse:hover{fill:#1e293b;stroke:#3b9eff;cursor:pointer}
+.uc-text{font-size:11px;fill:#e2e8f0;text-anchor:middle;font-weight:500}
+.uc-text-sm{font-size:9.5px;fill:#94a3b8;text-anchor:middle}
+.line{stroke:#334155;stroke-width:1;stroke-dasharray:none}
+.line-assoc{stroke:#475569;stroke-width:1.2}
+.system-box{fill:none;stroke:#1e3a5f;stroke-width:1.5;stroke-dasharray:6,4;rx:12}
+.system-label{font-size:14px;fill:#3b9eff;font-weight:600}
+.legend{font-size:10px;fill:#64748b}
+</style>
+</head>
+<body>
+<h1>🍰 Use Case Diagram — The Fat Milk</h1>
+<p class="subtitle">Hệ thống Quản lý Chuỗi Tiệm Bánh & Đồ uống — 3 Actor, 6 Module</p>
+<div class="canvas">
+<svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg">
+<!-- SYSTEM BOUNDARY -->
+<rect x="200" y="30" width="800" height="760" class="system-box"/>
+<text x="600" y="58" class="system-label" text-anchor="middle">THE FAT MILK SYSTEM</text>
+
+<!-- ═══ ACTOR: CUSTOMER (Left) ═══ -->
+<g transform="translate(80,280)">
+  <circle cx="0" cy="0" r="16" class="actor-icon"/>
+  <line x1="0" y1="16" x2="0" y2="42" class="actor-icon"/>
+  <line x1="-14" y1="28" x2="14" y2="28" class="actor-icon"/>
+  <line x1="0" y1="42" x2="-12" y2="60" class="actor-icon"/>
+  <line x1="0" y1="42" x2="12" y2="60" class="actor-icon"/>
+  <text x="0" y="80" class="actor-label">Customer</text>
+  <text x="0" y="94" style="font-size:10px;fill:#64748b;text-anchor:middle">(Khách hàng)</text>
+</g>
+
+<!-- ═══ ACTOR: STAFF (Left bottom) ═══ -->
+<g transform="translate(80,580)">
+  <circle cx="0" cy="0" r="16" class="actor-icon" style="stroke:#10b981"/>
+  <line x1="0" y1="16" x2="0" y2="42" style="stroke:#10b981;stroke-width:2"/>
+  <line x1="-14" y1="28" x2="14" y2="28" style="stroke:#10b981;stroke-width:2"/>
+  <line x1="0" y1="42" x2="-12" y2="60" style="stroke:#10b981;stroke-width:2"/>
+  <line x1="0" y1="42" x2="12" y2="60" style="stroke:#10b981;stroke-width:2"/>
+  <text x="0" y="80" class="actor-label" style="fill:#10b981">Staff</text>
+  <text x="0" y="94" style="font-size:10px;fill:#64748b;text-anchor:middle">(Nhân viên)</text>
+</g>
+
+<!-- ═══ ACTOR: ADMIN (Right) ═══ -->
+<g transform="translate(1120,400)">
+  <circle cx="0" cy="0" r="16" class="actor-icon" style="stroke:#f59e0b"/>
+  <line x1="0" y1="16" x2="0" y2="42" style="stroke:#f59e0b;stroke-width:2"/>
+  <line x1="-14" y1="28" x2="14" y2="28" style="stroke:#f59e0b;stroke-width:2"/>
+  <line x1="0" y1="42" x2="-12" y2="60" style="stroke:#f59e0b;stroke-width:2"/>
+  <line x1="0" y1="42" x2="12" y2="60" style="stroke:#f59e0b;stroke-width:2"/>
+  <text x="0" y="80" class="actor-label" style="fill:#f59e0b">Admin</text>
+  <text x="0" y="94" style="font-size:10px;fill:#64748b;text-anchor:middle">(Chủ chuỗi)</text>
+</g>
+
+<!-- ═══ ACTOR: SEPAY (Right top) ═══ -->
+<g transform="translate(1120,140)">
+  <rect x="-28" y="-18" width="56" height="36" rx="6" style="fill:#1e293b;stroke:#8b5cf6;stroke-width:1.5"/>
+  <text x="0" y="5" style="font-size:12px;fill:#8b5cf6;text-anchor:middle;font-weight:600">SePay</text>
+  <text x="0" y="54" style="font-size:10px;fill:#64748b;text-anchor:middle">(External)</text>
+</g>
+
+<!-- ════════ USE CASES ════════ -->
+
+<!-- Module 1: PWA - Duyệt & Mua hàng -->
+<rect x="240" y="80" width="340" height="200" rx="8" style="fill:#0f172a;stroke:#1e3a5f;stroke-width:1;opacity:0.5"/>
+<text x="260" y="102" style="font-size:11px;fill:#475569;font-weight:600">PWA — Duyệt & Mua hàng</text>
+
+<ellipse cx="350" cy="130" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="134" class="uc-text">Xem SP theo chi nhánh</text>
+
+<ellipse cx="350" cy="180" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="184" class="uc-text">Đặt hàng + Ghi chú</text>
+
+<ellipse cx="350" cy="230" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="226" class="uc-text">Thanh toán</text>
+<text x="350" y="240" class="uc-text-sm">(Ví / COD / QR SePay)</text>
+
+<!-- Module 2: CRM & Tài chính -->
+<rect x="240" y="290" width="340" height="200" rx="8" style="fill:#0f172a;stroke:#1e3a5f;stroke-width:1;opacity:0.5"/>
+<text x="260" y="312" style="font-size:11px;fill:#475569;font-weight:600">CRM & Tài chính khách hàng</text>
+
+<ellipse cx="350" cy="340" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="344" class="uc-text">Nạp tiền Ví (SePay)</text>
+
+<ellipse cx="350" cy="390" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="394" class="uc-text">Tích / Dùng Điểm</text>
+
+<ellipse cx="350" cy="440" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="444" class="uc-text">Xem hạng VIP + Ưu đãi</text>
+
+<!-- Module 3: POS -->
+<rect x="240" y="510" width="340" height="180" rx="8" style="fill:#0f172a;stroke:#1e3a5f;stroke-width:1;opacity:0.5"/>
+<text x="260" y="532" style="font-size:11px;fill:#475569;font-weight:600">POS — Bán hàng tại quầy</text>
+
+<ellipse cx="350" cy="560" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="564" class="uc-text">Quét Barcode + Tạo đơn</text>
+
+<ellipse cx="350" cy="610" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="614" class="uc-text">Tra CRM khách (SĐT)</text>
+
+<ellipse cx="350" cy="660" rx="90" ry="22" class="uc-ellipse"/>
+<text x="350" y="664" class="uc-text">In hóa đơn K80/K57</text>
+
+<!-- Module 4: Admin - SP & Kho -->
+<rect x="620" y="80" width="360" height="200" rx="8" style="fill:#0f172a;stroke:#1e3a5f;stroke-width:1;opacity:0.5"/>
+<text x="640" y="102" style="font-size:11px;fill:#475569;font-weight:600">Admin — Sản phẩm & Kho</text>
+
+<ellipse cx="750" cy="130" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="134" class="uc-text">CRUD Sản phẩm / Combo</text>
+
+<ellipse cx="750" cy="180" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="184" class="uc-text">Quản lý tồn kho chi nhánh</text>
+
+<ellipse cx="750" cy="230" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="234" class="uc-text">Chuyển kho giữa CN</text>
+
+<!-- Module 5: Admin - CRM & Marketing -->
+<rect x="620" y="290" width="360" height="250" rx="8" style="fill:#0f172a;stroke:#1e3a5f;stroke-width:1;opacity:0.5"/>
+<text x="640" y="312" style="font-size:11px;fill:#475569;font-weight:600">Admin — CRM & Marketing</text>
+
+<ellipse cx="750" cy="340" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="344" class="uc-text">Cấu hình hạng + Chiết khấu</text>
+
+<ellipse cx="750" cy="390" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="394" class="uc-text">Tạo Voucher (Targeted)</text>
+
+<ellipse cx="750" cy="440" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="444" class="uc-text">Tạo Flash Sale</text>
+
+<ellipse cx="750" cy="490" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="494" class="uc-text">Đối soát Ví + SePay</text>
+
+<!-- Module 6: Admin - Báo cáo -->
+<rect x="620" y="560" width="360" height="130" rx="8" style="fill:#0f172a;stroke:#1e3a5f;stroke-width:1;opacity:0.5"/>
+<text x="640" y="582" style="font-size:11px;fill:#475569;font-weight:600">Admin — Báo cáo</text>
+
+<ellipse cx="750" cy="610" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="614" class="uc-text">Doanh thu theo chi nhánh</text>
+
+<ellipse cx="750" cy="660" rx="100" ry="22" class="uc-ellipse"/>
+<text x="750" y="664" class="uc-text">SP bán chạy + Ví tổng</text>
+
+<!-- ════════ ASSOCIATION LINES ════════ -->
+<!-- Customer → PWA -->
+<line x1="100" y1="270" x2="260" y2="130" class="line-assoc"/>
+<line x1="100" y1="280" x2="260" y2="180" class="line-assoc"/>
+<line x1="100" y1="290" x2="260" y2="230" class="line-assoc"/>
+<!-- Customer → CRM -->
+<line x1="100" y1="310" x2="260" y2="340" class="line-assoc"/>
+<line x1="100" y1="320" x2="260" y2="390" class="line-assoc"/>
+<line x1="100" y1="330" x2="260" y2="440" class="line-assoc"/>
+
+<!-- Staff → POS -->
+<line x1="100" y1="570" x2="260" y2="560" class="line-assoc" style="stroke:#10b981;opacity:0.6"/>
+<line x1="100" y1="580" x2="260" y2="610" class="line-assoc" style="stroke:#10b981;opacity:0.6"/>
+<line x1="100" y1="590" x2="260" y2="660" class="line-assoc" style="stroke:#10b981;opacity:0.6"/>
+
+<!-- Admin → Admin modules -->
+<line x1="1090" y1="390" x2="850" y2="130" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+<line x1="1090" y1="395" x2="850" y2="180" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+<line x1="1090" y1="400" x2="850" y2="340" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+<line x1="1090" y1="405" x2="850" y2="390" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+<line x1="1090" y1="410" x2="850" y2="490" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+<line x1="1090" y1="420" x2="850" y2="610" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+<line x1="1090" y1="425" x2="850" y2="660" class="line-assoc" style="stroke:#f59e0b;opacity:0.5"/>
+
+<!-- SePay → Nạp ví + Thanh toán -->
+<line x1="1090" y1="140" x2="440" y2="230" class="line-assoc" style="stroke:#8b5cf6;opacity:0.6;stroke-dasharray:4,3"/>
+<line x1="1090" y1="145" x2="440" y2="340" class="line-assoc" style="stroke:#8b5cf6;opacity:0.6;stroke-dasharray:4,3"/>
+<line x1="1090" y1="150" x2="850" y2="490" class="line-assoc" style="stroke:#8b5cf6;opacity:0.6;stroke-dasharray:4,3"/>
+
+<!-- LEGEND -->
+<g transform="translate(220,760)">
+  <line x1="0" y1="8" x2="30" y2="8" style="stroke:#3b9eff;stroke-width:2"/>
+  <text x="36" y="12" class="legend" style="fill:#3b9eff">Customer</text>
+  <line x1="120" y1="8" x2="150" y2="8" style="stroke:#10b981;stroke-width:2"/>
+  <text x="156" y="12" class="legend" style="fill:#10b981">Staff</text>
+  <line x1="220" y1="8" x2="250" y2="8" style="stroke:#f59e0b;stroke-width:2"/>
+  <text x="256" y="12" class="legend" style="fill:#f59e0b">Admin</text>
+  <line x1="330" y1="8" x2="360" y2="8" style="stroke:#8b5cf6;stroke-width:2;stroke-dasharray:4,3"/>
+  <text x="366" y="12" class="legend" style="fill:#8b5cf6">SePay (External)</text>
+</g>
+
+</svg>
+</div>
+</body>
+</html>

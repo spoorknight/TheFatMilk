@@ -1,0 +1,277 @@
+<!-- MÔ TẢ: ERD — THE FAT MILK. Entity-Relationship Diagram 23 tables: users, products, orders, wallets, inventory, vouchers, flash_sales, notifications, sepay. SVG thuần, dark theme. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ERD — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;padding:24px;overflow:auto}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px}
+.sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:20px}
+.erd{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;max-width:1200px;margin:0 auto}
+.entity{background:#0f172a;border:1.5px solid #334155;border-radius:10px;overflow:hidden;transition:all .2s}
+.entity:hover{border-color:#3b9eff;transform:translateY(-2px)}
+.entity-header{padding:10px 14px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px}
+.entity-header.core{background:#1a2744;color:#3b9eff}
+.entity-header.finance{background:#1a2e1a;color:#10b981}
+.entity-header.order{background:#2e241a;color:#f59e0b}
+.entity-header.support{background:#2a1a2e;color:#a78bfa}
+.field{padding:4px 14px;font-size:11px;color:#94a3b8;border-top:1px solid #1e293b;display:flex;justify-content:space-between}
+.field .type{color:#64748b;font-size:10px}
+.field.pk{color:#3b9eff;font-weight:600}
+.field.fk{color:#f59e0b}
+.relations{max-width:1200px;margin:20px auto;padding:16px;background:#0f172a;border:1px solid #1e3a5f;border-radius:10px}
+.relations h3{font-size:14px;color:#3b9eff;margin-bottom:10px}
+.rel{font-size:11px;color:#94a3b8;padding:3px 0;display:flex;gap:8px}
+.rel .arrow{color:#f59e0b;min-width:20px}
+</style>
+</head>
+<body>
+<h1>🗃️ Entity-Relationship Diagram — The Fat Milk</h1>
+<p class="sub">PostgreSQL 16 · 23 Tables · Prisma ORM</p>
+
+<div class="erd">
+
+<!-- CORE -->
+<div class="entity">
+<div class="entity-header core">👤 users</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">phone <span class="type">VARCHAR UNIQUE</span></div>
+<div class="field">password_hash <span class="type">VARCHAR</span></div>
+<div class="field">full_name <span class="type">VARCHAR</span></div>
+<div class="field">role <span class="type">ENUM</span></div>
+<div class="field fk">tier_id <span class="type">FK → tiers</span></div>
+<div class="field">total_spent <span class="type">BIGINT</span></div>
+<div class="field">points_balance <span class="type">INT</span></div>
+<div class="field">is_deleted <span class="type">BOOL</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">🏢 branches</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">name <span class="type">VARCHAR</span></div>
+<div class="field">address <span class="type">VARCHAR</span></div>
+<div class="field">phone <span class="type">VARCHAR</span></div>
+<div class="field">latitude <span class="type">DECIMAL</span></div>
+<div class="field">longitude <span class="type">DECIMAL</span></div>
+<div class="field">is_active <span class="type">BOOL</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">👑 customer_tiers</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">name <span class="type">VARCHAR</span></div>
+<div class="field">min_spent <span class="type">BIGINT</span></div>
+<div class="field">maintain_spent <span class="type">BIGINT</span></div>
+<div class="field">discount_percent <span class="type">DECIMAL</span></div>
+<div class="field">sort_order <span class="type">INT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">📁 categories</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">name <span class="type">VARCHAR</span></div>
+<div class="field">slug <span class="type">VARCHAR UNIQUE</span></div>
+<div class="field">icon_url <span class="type">VARCHAR</span></div>
+<div class="field">sort_order <span class="type">INT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">🍰 products</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">category_id <span class="type">FK → categories</span></div>
+<div class="field">name <span class="type">VARCHAR</span></div>
+<div class="field">sku <span class="type">VARCHAR UNIQUE</span></div>
+<div class="field">cost_price <span class="type">BIGINT</span></div>
+<div class="field">selling_price <span class="type">BIGINT</span></div>
+<div class="field">allergens <span class="type">VARCHAR</span></div>
+<div class="field">is_combo <span class="type">BOOL</span></div>
+<div class="field">is_seasonal <span class="type">BOOL</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">🖼️ product_images</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">product_id <span class="type">FK → products</span></div>
+<div class="field">image_url <span class="type">VARCHAR</span></div>
+<div class="field">is_primary <span class="type">BOOL</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">🔗 combo_products</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">combo_id <span class="type">FK → products</span></div>
+<div class="field fk">product_id <span class="type">FK → products</span></div>
+<div class="field">quantity <span class="type">INT</span></div>
+</div>
+
+<!-- INVENTORY -->
+<div class="entity">
+<div class="entity-header support">📦 inventory</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">product_id <span class="type">FK → products</span></div>
+<div class="field fk">branch_id <span class="type">FK → branches</span></div>
+<div class="field">stock <span class="type">INT</span></div>
+<div class="field">min_stock <span class="type">INT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header support">📋 inventory_logs</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">inventory_id <span class="type">FK → inventory</span></div>
+<div class="field">change_type <span class="type">VARCHAR</span></div>
+<div class="field">quantity_change <span class="type">INT</span></div>
+<div class="field">stock_after <span class="type">INT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header support">🔄 stock_transfers</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">from_branch_id <span class="type">FK → branches</span></div>
+<div class="field fk">to_branch_id <span class="type">FK → branches</span></div>
+<div class="field fk">product_id <span class="type">FK → products</span></div>
+<div class="field">quantity <span class="type">INT</span></div>
+<div class="field">status <span class="type">VARCHAR</span></div>
+</div>
+
+<!-- FINANCE -->
+<div class="entity">
+<div class="entity-header finance">💰 wallets</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">user_id <span class="type">FK → users UNIQUE</span></div>
+<div class="field">balance <span class="type">BIGINT ≥ 0</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header finance">📊 wallet_transactions</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">wallet_id <span class="type">FK → wallets</span></div>
+<div class="field">type <span class="type">topup/payment/refund</span></div>
+<div class="field">amount <span class="type">BIGINT</span></div>
+<div class="field">balance_before <span class="type">BIGINT</span></div>
+<div class="field">balance_after <span class="type">BIGINT</span></div>
+<div class="field">idempotency_key <span class="type">UNIQUE</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header finance">⭐ points_ledger</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">user_id <span class="type">FK → users</span></div>
+<div class="field">type <span class="type">earn/redeem</span></div>
+<div class="field">points <span class="type">INT</span></div>
+<div class="field">balance_after <span class="type">INT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header finance">💳 sepay_transactions</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">sepay_transaction_id <span class="type">UNIQUE</span></div>
+<div class="field fk">wallet_id <span class="type">FK → wallets</span></div>
+<div class="field">amount <span class="type">BIGINT</span></div>
+<div class="field">status <span class="type">VARCHAR</span></div>
+<div class="field">raw_webhook <span class="type">JSONB</span></div>
+</div>
+
+<!-- ORDERS -->
+<div class="entity">
+<div class="entity-header order">🛒 orders</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">order_number <span class="type">VARCHAR UNIQUE</span></div>
+<div class="field fk">user_id <span class="type">FK → users</span></div>
+<div class="field fk">branch_id <span class="type">FK → branches</span></div>
+<div class="field">source <span class="type">pwa/pos</span></div>
+<div class="field">status <span class="type">VARCHAR</span></div>
+<div class="field">delivery_method <span class="type">VARCHAR</span></div>
+<div class="field">total_amount <span class="type">BIGINT</span></div>
+<div class="field">payment_method <span class="type">VARCHAR</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header order">📝 order_items</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">order_id <span class="type">FK → orders</span></div>
+<div class="field fk">product_id <span class="type">FK → products</span></div>
+<div class="field">quantity <span class="type">INT</span></div>
+<div class="field">unit_price <span class="type">BIGINT</span></div>
+<div class="field">note <span class="type">VARCHAR</span></div>
+</div>
+
+<!-- VOUCHER -->
+<div class="entity">
+<div class="entity-header support">🎫 vouchers</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">code <span class="type">VARCHAR UNIQUE</span></div>
+<div class="field">type <span class="type">percent/fixed</span></div>
+<div class="field">value <span class="type">BIGINT</span></div>
+<div class="field">target_tier <span class="type">VARCHAR</span></div>
+<div class="field fk">target_branch <span class="type">FK → branches</span></div>
+<div class="field">usage_limit <span class="type">INT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header support">🔖 voucher_usage</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">voucher_id <span class="type">FK → vouchers</span></div>
+<div class="field fk">user_id <span class="type">FK → users</span></div>
+<div class="field fk">order_id <span class="type">FK → orders</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header support">⚡ flash_sales</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field">name <span class="type">VARCHAR</span></div>
+<div class="field">target_tier <span class="type">VARCHAR</span></div>
+<div class="field">start_time <span class="type">TIMESTAMP</span></div>
+<div class="field">end_time <span class="type">TIMESTAMP</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header support">🏷️ flash_sale_products</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">flash_sale_id <span class="type">FK → flash_sales</span></div>
+<div class="field fk">product_id <span class="type">FK → products</span></div>
+<div class="field">sale_price <span class="type">BIGINT</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header support">🔔 notifications</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">user_id <span class="type">FK → users</span></div>
+<div class="field">type <span class="type">VARCHAR</span></div>
+<div class="field">title <span class="type">VARCHAR</span></div>
+<div class="field">is_read <span class="type">BOOL</span></div>
+</div>
+
+<div class="entity">
+<div class="entity-header core">🏷️ staff_branches</div>
+<div class="field pk">id <span class="type">UUID PK</span></div>
+<div class="field fk">user_id <span class="type">FK → users</span></div>
+<div class="field fk">branch_id <span class="type">FK → branches</span></div>
+</div>
+
+</div>
+
+<!-- RELATIONS -->
+<div class="relations">
+<h3>🔗 Quan hệ chính (Cardinality)</h3>
+<div class="rel"><span class="arrow">1:1</span> users ↔ wallets (mỗi user có 1 ví)</div>
+<div class="rel"><span class="arrow">1:N</span> users → orders (1 user, nhiều đơn)</div>
+<div class="rel"><span class="arrow">1:N</span> users → points_ledger (lịch sử điểm)</div>
+<div class="rel"><span class="arrow">N:1</span> users → customer_tiers (1 hạng / user)</div>
+<div class="rel"><span class="arrow">N:N</span> users ↔ branches (qua staff_branches)</div>
+<div class="rel"><span class="arrow">N:1</span> products → categories</div>
+<div class="rel"><span class="arrow">1:N</span> products → product_images (gallery)</div>
+<div class="rel"><span class="arrow">N:N</span> products ↔ products (combo qua combo_products)</div>
+<div class="rel"><span class="arrow">1:N</span> products → inventory (1 record/branch)</div>
+<div class="rel"><span class="arrow">1:N</span> orders → order_items</div>
+<div class="rel"><span class="arrow">1:N</span> wallets → wallet_transactions</div>
+<div class="rel"><span class="arrow">1:N</span> wallets → sepay_transactions</div>
+<div class="rel"><span class="arrow">1:N</span> vouchers → voucher_usage</div>
+<div class="rel"><span class="arrow">1:N</span> flash_sales → flash_sale_products</div>
+</div>
+
+</body>
+</html>

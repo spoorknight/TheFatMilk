@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AntiGravity — Project Template</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════════ */
+    :root {
+      --bg-base:       #080c14;
+      --bg-card:       #0d1422;
+      --bg-card-hover: #111a2e;
+      --bg-input:      #0a1120;
+      --border:        rgba(59,158,255,0.15);
+      --border-glow:   rgba(59,158,255,0.35);
+      --accent:        #3b9eff;
+      --accent-dim:    rgba(59,158,255,0.12);
+      --green:         #22c55e;
+      --green-dim:     rgba(34,197,94,0.12);
+      --yellow:        #f59e0b;
+      --yellow-dim:    rgba(245,158,11,0.12);
+      --red:           #ef4444;
+      --red-dim:       rgba(239,68,68,0.12);
+      --pink:          #e879f9;
+      --pink-dim:      rgba(232,121,249,0.12);
+      --orange:        #fb923c;
+      --orange-dim:    rgba(251,146,60,0.12);
+      --text-primary:  #e8f0fe;
+      --text-secondary:#8ba3c7;
+      --text-muted:    #4a6380;
+      --font-mono:     'JetBrains Mono', monospace;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       RESET & BASE
+    ═══════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image:
+        linear-gradient(rgba(59,158,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,158,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════════ */
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ═══════════════════════════════════════════════════
+       HERO
+    ═══════════════════════════════════════════════════ */
+    .hero {
+      text-align: center;
+      padding: 64px 0 48px;
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      text-shadow: none;
+      filter: drop-shadow(0 0 20px rgba(59,158,255,0.3));
+    }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin: 0 auto 32px;
+    }
+    .hero-version {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       SECTION HEADER
+    ═══════════════════════════════════════════════════ */
+    .section { margin-top: 48px; }
+    .section-label {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 11px; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .section-label::before {
+      content: ''; flex: none;
+      width: 24px; height: 2px;
+      background: var(--accent);
+    }
+
+    /* ═══════════════════════════════════════════════════
+       FORM CARD
+    ═══════════════════════════════════════════════════ */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--border-glow); }
+
+    /* ═══════════════════════════════════════════════════
+       FORM ELEMENTS
+    ═══════════════════════════════════════════════════ */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    label .req { color: var(--red); font-size: 10px; }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59,158,255,0.1);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    textarea { resize: vertical; min-height: 100px; }
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238ba3c7' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; cursor: pointer; }
+
+    /* ═══════════════════════════════════════════════════
+       SCENARIO SELECTOR
+    ═══════════════════════════════════════════════════ */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .scenario-card {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .scenario-card:hover { border-color: var(--border-glow); background: var(--bg-card-hover); }
+    .scenario-card input[type="radio"] { position: absolute; opacity: 0; }
+    .scenario-card.selected-green  { border-color: var(--green);  background: var(--green-dim); }
+    .scenario-card.selected-yellow { border-color: var(--yellow); background: var(--yellow-dim); }
+    .scenario-card.selected-red    { border-color: var(--red);    background: var(--red-dim); }
+    .scenario-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      display: inline-block; margin-right: 6px;
+    }
+    .dot-green  { background: var(--green); }
+    .dot-yellow { background: var(--yellow); }
+    .dot-red    { background: var(--red); }
+    .scenario-title {
+      font-size: 13px; font-weight: 700;
+      margin-bottom: 4px;
+      display: flex; align-items: center;
+    }
+    .scenario-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
+    .scenario-tag {
+      display: inline-block; margin-top: 8px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .tag-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid var(--green); }
+    .tag-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid var(--yellow); }
+    .tag-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid var(--red); }
+
+    /* ═══════════════════════════════════════════════════
+       STACK SELECTOR
+    ═══════════════════════════════════════════════════ */
+    .stack-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 4px;
+    }
+    .chip {
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 12px; font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip.active { border-color: var(--accent); background: var(--accent-dim); color: var(--accent); }
+
+    .stack-custom {
+      display: flex; gap: 8px; margin-top: 8px;
+    }
+    .stack-custom input { flex: 1; }
+    .btn-add-chip {
+      padding: 10px 16px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      color: var(--accent);
+      font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-add-chip:hover { background: rgba(59,158,255,0.2); }
+
+    /* ═══════════════════════════════════════════════════
+       MODULE LIST
+    ═══════════════════════════════════════════════════ */
+    .module-list { display: flex; flex-direction: column; gap: 8px; }
+    .module-item {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .module-item input { flex: 1; }
+    .btn-remove {
+      width: 36px; height: 36px; flex: none;
+      background: var(--red-dim);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 8px;
+      color: var(--red);
+      font-size: 16px;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-remove:hover { background: rgba(239,68,68,0.25); }
+    .btn-add-module {
+      margin-top: 8px;
+      padding: 10px;
+      background: transparent;
+      border: 1px dashed var(--border-glow);
+      border-radius: 8px;
+      color: var(--accent);
+      font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      width: 100%;
+    }
+    .btn-add-module:hover { background: var(--accent-dim); }
+
+    /* ═══════════════════════════════════════════════════
+       CHECKLIST
+    ═══════════════════════════════════════════════════ */
+    .checklist { display: flex; flex-direction: column; gap: 10px; }
+    .check-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .check-item:hover { border-color: var(--border-glow); }
+    .check-item input[type="checkbox"] { display: none; }
+    .check-box {
+      width: 18px; height: 18px; flex: none;
+      border: 2px solid var(--text-muted);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      margin-top: 1px;
+    }
+    .check-item.checked .check-box {
+      background: var(--green);
+      border-color: var(--green);
+    }
+    .check-item.checked .check-box::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 700; }
+    .check-item.checked { border-color: var(--green); background: var(--green-dim); }
+    .check-item.checked .check-label { color: var(--text-secondary); text-decoration: line-through; }
+    .check-label { font-size: 13px; }
+    .check-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ═══════════════════════════════════════════════════
+       PIPELINE OVERVIEW
+    ═══════════════════════════════════════════════════ */
+    .pipeline {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .pipeline-step {
+      display: flex; gap: 16px; align-items: flex-start;
+      position: relative;
+    }
+    .pipeline-step + .pipeline-step { margin-top: 0; }
+    .pipeline-left {
+      display: flex; flex-direction: column; align-items: center;
+      width: 40px; flex: none;
+    }
+    .pipeline-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid;
+      z-index: 1; position: relative;
+    }
+    .pipeline-line {
+      width: 2px; flex: 1; min-height: 20px;
+      background: linear-gradient(180deg, var(--border-glow), var(--border));
+    }
+    .pipeline-right { flex: 1; padding-bottom: 20px; }
+    .pipeline-right:last-child { padding-bottom: 0; }
+    .pipeline-agent { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 2px; }
+    .pipeline-role { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .pipeline-desc { font-size: 12px; color: var(--text-secondary); }
+    .pipeline-outputs {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+    }
+    .out-tag {
+      font-size: 10px; font-weight: 500;
+      padding: 2px 8px; border-radius: 4px;
+      font-family: var(--font-mono);
+      background: rgba(139,163,199,0.1);
+      border: 1px solid rgba(139,163,199,0.2);
+      color: var(--text-secondary);
+    }
+
+    /* Colors per agent */
+    .ag01 { color: var(--accent); border-color: var(--accent); }
+    .ag02 { color: var(--pink);   border-color: var(--pink); }
+    .ag03 { color: var(--green);  border-color: var(--green); }
+    .ag04 { color: var(--yellow); border-color: var(--yellow); }
+    .ag05 { color: var(--orange); border-color: var(--orange); }
+    .cp {
+      display: flex; align-items: center; gap: 8px;
+      margin: 4px 0 16px 56px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 11px; font-weight: 600;
+      color: var(--red); letter-spacing: 0.5px;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       CONSTRAINT TAGS
+    ═══════════════════════════════════════════════════ */
+    .constraint-list { display: flex; flex-direction: column; gap: 8px; }
+    .constraint-row {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .constraint-row input { flex: 1; }
+    .constraint-select { width: 120px; flex: none; }
+
+    /* ═══════════════════════════════════════════════════
+       GENERATE BUTTON
+    ═══════════════════════════════════════════════════ */
+    .action-bar {
+      display: flex; gap: 12px; justify-content: flex-end;
+      margin-top: 36px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+    .btn-secondary {
+      padding: 12px 24px;
+      background: transparent;
+      border: 1px solid var(--border-glow);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .btn-primary {
+      padding: 12px 32px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 4px 16px rgba(59,158,255,0.3);
+    }
+    .btn-primary:hover { background: #5eaeff; box-shadow: 0 4px 24px rgba(59,158,255,0.5); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ═══════════════════════════════════════════════════
+       OUTPUT PREVIEW
+    ═══════════════════════════════════════════════════ */
+    #output-section { margin-top: 48px; display: none; }
+    .output-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .output-box {
+      background: #050810;
+      border: 1px solid var(--border-glow);
+      border-radius: 10px;
+      padding: 24px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .output-box .c-comment { color: var(--text-muted); }
+    .output-box .c-heading  { color: var(--accent); font-weight: 700; }
+    .output-box .c-key     { color: var(--pink); }
+    .output-box .c-val     { color: var(--green); }
+    .output-box .c-task    { color: var(--yellow); }
+    .output-box .c-ok      { color: var(--green); }
+
+    .btn-copy {
+      padding: 8px 16px;
+      background: var(--accent-dim);
+      border: 1px solid var(--border-glow);
+      border-radius: 6px;
+      color: var(--accent);
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .btn-copy:hover { background: rgba(59,158,255,0.2); }
+    .btn-copy.copied { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+
+    /* ═══════════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════════ */
+    #toast {
+      position: fixed; bottom: 32px; right: 32px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-primary);
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 999;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ═══════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════ */
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .scenario-grid { grid-template-columns: 1fr; }
+      .action-bar { flex-direction: column-reverse; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════ HERO ══ -->
+<div class="container">
+  <div class="hero">
+    <div class="hero-badge">⚡ AntiGravity Agent Framework</div>
+    <h1 class="hero-title">Project Template</h1>
+    <p class="hero-sub">Điền thông tin dự án để tạo file <code style="font-family:var(--font-mono);font-size:13px;color:var(--accent);">PROJECT_BRIEF.md</code> và khởi chạy pipeline 5-Agent.</p>
+    <div class="hero-version">v2.0 · 2026 · Spoorknight</div>
+  </div>
+
+  <!-- ══════════════════ SECTION 1: PROJECT INFO ════ -->
+  <div class="section">
+    <div class="section-label">01 — Thông tin dự án</div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tên dự án <span class="req">*</span></label>
+          <input type="text" id="proj-name" placeholder="VD: Hệ thống quản lý kho 2.0">
+        </div>
+        <div class="form-group">
+          <label>Khách hàng / Chủ sở hữu <span class="req">*</span></label>
+          <input type="text" id="proj-client" placeholder="VD: Công ty TNHH ABC">
+        </div>
+        <div class="form-group">
+          <label>PM / PO phụ trách</label>
+          <input type="text" id="proj-pm" placeholder="VD: Nguyễn Văn A">
+        </div>
+        <div class="form-group">
+          <label>Deadline dự kiến</label>
+          <input type="date" id="proj-deadline">
+        </div>
+        <div class="form-group full">
+          <label>Mô tả bài toán <span class="req">*</span></label>
+          <textarea id="proj-desc" placeholder="Mô tả trong 3-5 câu: Khách hàng là ai? Họ đang gặp vấn đề gì? Hệ thống mới cần giải quyết điều gì?"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SECTION 2: SCENARIO ════════ -->
+  <div class="section">
+    <div class="section-label">02 — Kịch bản dự án</div>
+    <div class="card">
+      <div class="scenario-grid">
+        <label class="scenario-card" id="sc1" onclick="selectScenario(1)">
+          <input type="radio" name="scenario" value="1">
+          <div class="scenario-title"><span class="scenario-dot dot-green"></span>Scenario 1</div>
+          <div style="font-size:16px;margin-bottom:6px;">🟢 Greenfield</div>
+          <div class="scenario-desc">Dự án mới hoàn toàn từ SRS/PRD. Không có code cũ.</div>
+          <div class="scenario-tag tag-green">Song song theo module</div>
+        </label>
+
+        <label class="scenario-card" id="sc2" onclick="selectScenario(2)">
+          <input type="radio" name="scenario" value="2">
+          <div class="scenario-title"><span class="scenario-dot dot-yellow"></span>Scenario 2</div>
+          <div style="font-size:16px;margin-bottom:6px;">🟡 Maintenance</div>
+          <div class="scenario-desc">Có source code cũ, cần thêm tính năng hoặc fix bug.</div>
+          <div class="scenario-tag tag-yellow">Tuần tự theo ticket</div>
+        </label>
+
+        <label class="scenario-card" id="sc3" onclick="selectScenario(3)">
+          <input type="radio" name="scenario" value="3">
+          <div class="scenario-title"><span class="scenario-dot dot-red"></span>Scenario 3</div>
+          <div style="font-size:16px;margin-bottom:6px;">🔴 Refactoring</div>
+          <div class="scenario-desc">Có code cũ lẫn SRS mới, viết lại sạch theo kiến trúc mới.</div>
+          <div class="scenario-tag tag-red">Tuần tự theo layer</div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SECTION 3: TECH STACK ══════ -->
+  <div class="section">
+    <div class="section-label">03 — Tech Stack</div>
+    <div class="card">
+      <label>Chọn nhanh</label>
+      <div class="stack-chips" id="chip-container">
+        <div class="chip" onclick="toggleChip(this)">Node.js</div>
+        <div class="chip" onclick="toggleChip(this)">React</div>
+        <div class="chip" onclick="toggleChip(this)">Next.js</div>
+        <div class="chip" onclick="toggleChip(this)">Vue.js</div>
+        <div class="chip" onclick="toggleChip(this)">Python</div>
+        <div class="chip" onclick="toggleChip(this)">FastAPI</div>
+        <div class="chip" onclick="toggleChip(this)">Django</div>
+        <div class="chip" onclick="toggleChip(this)">PostgreSQL</div>
+        <div class="chip" onclick="toggleChip(this)">MySQL</div>
+        <div class="chip" onclick="toggleChip(this)">MongoDB</div>
+        <div class="chip" onclick="toggleChip(this)">Redis</div>
+        <div class="chip" onclick="toggleChip(this)">Docker</div>
+        <div class="chip" onclick="toggleChip(this)">Kubernetes</div>
+        <div class="chip" onclick="toggleChip(this)">AWS</div>
+        <div class="chip" onclick="toggleChip(this)">TypeScript</div>
+        <div class="chip" onclick="toggleChip(this)">GraphQL</div>
+      </div>
+      <div class="stack-custom">
+        <input type="text" id="custom-tech" placeholder="Thêm công nghệ khác..." onkeydown="if(event.key==='Enter'){addCustomChip()}">
+        <button class="btn-add-chip" onclick="addCustomChip()">+ Thêm</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SECTION 4: MODULES ════════ -->
+  <div class="section">
+    <div class="section-label">04 — Modules chính</div>
+    <div class="card">
+      <label style="margin-bottom:12px;">Danh sách module (AG-01 sẽ xác nhận lại)</label>
+      <div class="module-list" id="module-list">
+        <div class="module-item">
+          <input type="text" placeholder="VD: Quản lý người dùng">
+          <button class="btn-remove" onclick="removeModule(this)" title="Xóa">✕</button>
+        </div>
+        <div class="module-item">
+          <input type="text" placeholder="VD: Quản lý sản phẩm / kho">
+          <button class="btn-remove" onclick="removeModule(this)" title="Xóa">✕</button>
+        </div>
+        <div class="module-item">
+          <input type="text" placeholder="VD: Báo cáo & Dashboard">
+          <button class="btn-remove" onclick="removeModule(this)" title="Xóa">✕</button>
+        </div>
+      </div>
+      <button class="btn-add-module" onclick="addModule()">+ Thêm module</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SECTION 5: CONSTRAINTS ════ -->
+  <div class="section">
+    <div class="section-label">05 — Ràng buộc đặc biệt</div>
+    <div class="card">
+      <div class="constraint-list" id="constraint-list">
+        <div class="constraint-row">
+          <select class="constraint-select">
+            <option value="Tích hợp">🔗 Tích hợp</option>
+            <option value="Deploy">🚀 Deploy</option>
+            <option value="Bảo mật">🔒 Bảo mật</option>
+            <option value="Hiệu năng">⚡ Hiệu năng</option>
+            <option value="Khác">📌 Khác</option>
+          </select>
+          <input type="text" placeholder="VD: Phải tích hợp với hệ thống kế toán ABC hiện có">
+          <button class="btn-remove" onclick="removeConstraint(this)" title="Xóa">✕</button>
+        </div>
+        <div class="constraint-row">
+          <select class="constraint-select">
+            <option value="Deploy">🚀 Deploy</option>
+            <option value="Tích hợp">🔗 Tích hợp</option>
+            <option value="Bảo mật">🔒 Bảo mật</option>
+            <option value="Hiệu năng">⚡ Hiệu năng</option>
+            <option value="Khác">📌 Khác</option>
+          </select>
+          <input type="text" placeholder="VD: Deploy on-premise, không được dùng cloud">
+          <button class="btn-remove" onclick="removeConstraint(this)" title="Xóa">✕</button>
+        </div>
+      </div>
+      <button class="btn-add-module" onclick="addConstraint()">+ Thêm ràng buộc</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SECTION 6: CHECKLIST ══════ -->
+  <div class="section">
+    <div class="section-label">06 — Checklist chuẩn bị khởi chạy</div>
+    <div class="card">
+      <div class="checklist">
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">Nạp tài liệu SRS/PRD vào <code style="font-family:var(--font-mono);font-size:12px;">01_Analyst/Inputs/</code></div>
+            <div class="check-sub">Bắt buộc cho Scenario 1 và 3</div>
+          </div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">Nạp source code cũ vào <code style="font-family:var(--font-mono);font-size:12px;">03_Developer/Inputs/</code></div>
+            <div class="check-sub">Bắt buộc cho Scenario 2 và 3</div>
+          </div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">Điền quy tắc nghiệp vụ vào <code style="font-family:var(--font-mono);font-size:12px;">00_Global_Rules/03_Anti_Gravity_Logic.md</code></div>
+            <div class="check-sub">Hằng số, quy tắc, domain logic đặc thù của dự án này</div>
+          </div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">Cài đặt Python dependencies</div>
+            <div class="check-sub"><code style="font-family:var(--font-mono);font-size:12px;">pip install -r requirements.txt</code></div>
+          </div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">Set API key trong môi trường</div>
+            <div class="check-sub">GEMINI_API_KEY hoặc ANTHROPIC_API_KEY hoặc OPENAI_API_KEY</div>
+          </div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox">
+          <div class="check-box"></div>
+          <div>
+            <div class="check-label">PM đã đọc và hiểu <code style="font-family:var(--font-mono);font-size:12px;">Documents/EXECUTION_PLAN.md</code></div>
+            <div class="check-sub">Biết 3 Human Checkpoint cần duyệt: CP-1 sau AG-01, CP-2 sau AG-02, CP-3 sau AG-03</div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SECTION 7: PIPELINE REF ═══ -->
+  <div class="section">
+    <div class="section-label">07 — Pipeline 5-Agent</div>
+    <div class="card">
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="pipeline-left">
+            <div class="pipeline-num ag01">01</div>
+            <div class="pipeline-line"></div>
+          </div>
+          <div class="pipeline-right">
+            <div class="pipeline-agent" style="color:var(--accent)">AG-01</div>
+            <div class="pipeline-role">Business Analyst</div>
+            <div class="pipeline-desc">Đọc SRS/PRD → chuẩn hóa yêu cầu, bóc tách user story, đánh giá rủi ro.</div>
+            <div class="pipeline-outputs">
+              <span class="out-tag">Requirements_Spec.md</span>
+              <span class="out-tag">Product_Backlog.md</span>
+              <span class="out-tag">Risk_Register.md</span>
+              <span class="out-tag">Glossary.md</span>
+            </div>
+          </div>
+        </div>
+        <div class="cp">🛑 CP-1: PM xác nhận Requirements_Spec.md trước khi tiếp tục</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-left">
+            <div class="pipeline-num ag02">02</div>
+            <div class="pipeline-line"></div>
+          </div>
+          <div class="pipeline-right">
+            <div class="pipeline-agent" style="color:var(--pink)">AG-02</div>
+            <div class="pipeline-role">System Architect</div>
+            <div class="pipeline-desc">Thiết kế kiến trúc C4, chọn tech stack, định nghĩa API + DB, vẽ diagram.</div>
+            <div class="pipeline-outputs">
+              <span class="out-tag">System_Architecture.md</span>
+              <span class="out-tag">API_Contracts.md</span>
+              <span class="out-tag">Database_Schema.md</span>
+              <span class="out-tag">ERD.html</span>
+            </div>
+          </div>
+        </div>
+        <div class="cp">🛑 CP-2: PM duyệt Database Schema + API Contracts trước khi code</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-left">
+            <div class="pipeline-num ag03">03</div>
+            <div class="pipeline-line"></div>
+          </div>
+          <div class="pipeline-right">
+            <div class="pipeline-agent" style="color:var(--green)">AG-03</div>
+            <div class="pipeline-role">Developer</div>
+            <div class="pipeline-desc">Lập kế hoạch → code từng module theo API Contracts, xuất Changelog.</div>
+            <div class="pipeline-outputs">
+              <span class="out-tag">Implementation_Plan.md</span>
+              <span class="out-tag">Source Code</span>
+              <span class="out-tag">Changelog.md</span>
+            </div>
+          </div>
+        </div>
+        <div class="cp">🛑 CP-3: PM approve Implementation_Plan.md mỗi sprint</div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-left">
+            <div class="pipeline-num ag04">04</div>
+            <div class="pipeline-line"></div>
+          </div>
+          <div class="pipeline-right">
+            <div class="pipeline-agent" style="color:var(--yellow)">AG-04</div>
+            <div class="pipeline-role">QA Reviewer</div>
+            <div class="pipeline-desc">Viết test cases, chạy test, báo cáo bug, quét OWASP, đo hiệu năng.</div>
+            <div class="pipeline-outputs">
+              <span class="out-tag">Test_Results.md</span>
+              <span class="out-tag">Bug_Report.md</span>
+              <span class="out-tag">Security_Scan.md</span>
+              <span class="out-tag">QA_Sign_Off.md</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pipeline-step">
+          <div class="pipeline-left">
+            <div class="pipeline-num ag05">05</div>
+          </div>
+          <div class="pipeline-right">
+            <div class="pipeline-agent" style="color:var(--orange)">AG-05</div>
+            <div class="pipeline-role">Final Documenter</div>
+            <div class="pipeline-desc">Tổng hợp toàn bộ output → render .docx / .xlsx bộ hồ sơ hoàn chỉnh.</div>
+            <div class="pipeline-outputs">
+              <span class="out-tag">Final_Report.md</span>
+              <span class="out-tag">User_Manual.md</span>
+              <span class="out-tag">Developer_Guide.md</span>
+              <span class="out-tag">API_Documentation.md</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════ ACTION BAR ════════════════ -->
+  <div class="action-bar">
+    <button class="btn-secondary" onclick="resetForm()">↺ Reset</button>
+    <button class="btn-secondary" onclick="previewMD()">👁 Preview</button>
+    <button class="btn-primary" onclick="generateMD()">⚡ Tạo PROJECT_BRIEF.md</button>
+  </div>
+
+  <!-- ══════════════════ OUTPUT ════════════════════ -->
+  <div id="output-section">
+    <div class="output-header">
+      <div class="section-label" style="margin-bottom:0">Output — PROJECT_BRIEF.md</div>
+      <button class="btn-copy" id="copy-btn" onclick="copyOutput()">📋 Copy</button>
+    </div>
+    <div class="output-box" id="output-box"></div>
+
+    <div style="margin-top:20px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:12px;">🚀 Lệnh khởi chạy</div>
+      <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);background:#050810;padding:12px 16px;border-radius:8px;border:1px solid var(--border);" id="run-cmd">python utils/orchestrator.py --scenario 1</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TOAST ══════════════════════════════════════ -->
+<div id="toast">
+  <span id="toast-icon">✓</span>
+  <span id="toast-msg">Đã copy vào clipboard</span>
+</div>
+
+<script>
+  /* ═══════════════════════════════ STATE ═══════ */
+  let selectedScenario = 1;
+
+  /* ═══════════════════════════════ SCENARIO ════ */
+  function selectScenario(n) {
+    selectedScenario = n;
+    [1,2,3].forEach(i => {
+      const el = document.getElementById('sc'+i);
+      el.classList.remove('selected-green','selected-yellow','selected-red');
+    });
+    const map = {1:'selected-green', 2:'selected-yellow', 3:'selected-red'};
+    document.getElementById('sc'+n).classList.add(map[n]);
+  }
+  selectScenario(1);
+
+  /* ═══════════════════════════════ CHIPS ═══════ */
+  function toggleChip(el) {
+    el.classList.toggle('active');
+  }
+  function addCustomChip() {
+    const inp = document.getElementById('custom-tech');
+    const val = inp.value.trim();
+    if (!val) return;
+    const chip = document.createElement('div');
+    chip.className = 'chip active';
+    chip.textContent = val;
+    chip.onclick = () => toggleChip(chip);
+    document.getElementById('chip-container').appendChild(chip);
+    inp.value = '';
+  }
+  function getSelectedStack() {
+    return [...document.querySelectorAll('#chip-container .chip.active')]
+      .map(c => c.textContent.trim());
+  }
+
+  /* ═══════════════════════════════ MODULES ═════ */
+  function addModule() {
+    const li = document.createElement('div');
+    li.className = 'module-item';
+    li.innerHTML = `<input type="text" placeholder="Tên module mới..."><button class="btn-remove" onclick="removeModule(this)" title="Xóa">✕</button>`;
+    document.getElementById('module-list').appendChild(li);
+  }
+  function removeModule(btn) {
+    const items = document.querySelectorAll('#module-list .module-item');
+    if (items.length > 1) btn.closest('.module-item').remove();
+    else showToast('⚠️ Cần ít nhất 1 module', '#f59e0b');
+  }
+  function getModules() {
+    return [...document.querySelectorAll('#module-list input')]
+      .map(i => i.value.trim()).filter(Boolean);
+  }
+
+  /* ═══════════════════════════════ CONSTRAINTS ═ */
+  function addConstraint() {
+    const row = document.createElement('div');
+    row.className = 'constraint-row';
+    row.innerHTML = `
+      <select class="constraint-select">
+        <option>🔗 Tích hợp</option><option>🚀 Deploy</option>
+        <option>🔒 Bảo mật</option><option>⚡ Hiệu năng</option><option>📌 Khác</option>
+      </select>
+      <input type="text" placeholder="Mô tả ràng buộc...">
+      <button class="btn-remove" onclick="removeConstraint(this)" title="Xóa">✕</button>`;
+    document.getElementById('constraint-list').appendChild(row);
+  }
+  function removeConstraint(btn) {
+    const rows = document.querySelectorAll('#constraint-list .constraint-row');
+    if (rows.length > 1) btn.closest('.constraint-row').remove();
+  }
+  function getConstraints() {
+    return [...document.querySelectorAll('#constraint-list .constraint-row')]
+      .map(row => {
+        const sel = row.querySelector('select')?.value || '';
+        const txt = row.querySelector('input')?.value.trim() || '';
+        return txt ? `[${sel.replace(/[^\w\s]/g,'')}] ${txt}` : null;
+      }).filter(Boolean);
+  }
+
+  /* ═══════════════════════════════ CHECKLIST ════ */
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+  }
+
+  /* ═══════════════════════════════ GENERATE ════ */
+  const scenarioLabel = {
+    1: '🟢 Scenario 1 — Greenfield',
+    2: '🟡 Scenario 2 — Maintenance',
+    3: '🔴 Scenario 3 — Refactoring'
+  };
+  const scenarioCmd = {
+    1: 'python utils/orchestrator.py --scenario 1',
+    2: 'python utils/orchestrator.py --scenario 2',
+    3: 'python utils/orchestrator.py --scenario 3'
+  };
+
+  function buildMD() {
+    const name     = document.getElementById('proj-name').value.trim()    || '[PROJECT_NAME]';
+    const client   = document.getElementById('proj-client').value.trim()  || '[CLIENT_NAME]';
+    const pm       = document.getElementById('proj-pm').value.trim()      || '[PM_NAME]';
+    const deadline = document.getElementById('proj-deadline').value       || '[YYYY-MM-DD]';
+    const desc     = document.getElementById('proj-desc').value.trim()    || '[Chưa điền]';
+    const stack    = getSelectedStack();
+    const modules  = getModules();
+    const cons     = getConstraints();
+    const scenario = scenarioLabel[selectedScenario];
+    const now      = new Date().toISOString().slice(0,10);
+
+    let md = `# PROJECT BRIEF — ${name}\n`;
+    md += `\n> **Tạo bởi:** PROJECT_TEMPLATE.html · **Ngày:** ${now}\n`;
+    md += `> **Kịch bản:** ${scenario}\n\n---\n\n`;
+    md += `## 1. Thông tin cơ bản\n\n`;
+    md += `| Trường | Giá trị |\n|---|---|\n`;
+    md += `| Tên dự án | **${name}** |\n`;
+    md += `| Khách hàng / Chủ sở hữu | ${client} |\n`;
+    md += `| PM / PO phụ trách | ${pm} |\n`;
+    md += `| Kịch bản | ${scenario} |\n`;
+    md += `| Deadline dự kiến | ${deadline} |\n`;
+    md += `| Stack kỹ thuật | ${stack.length ? stack.join(', ') : '[Chưa xác định]'} |\n\n---\n\n`;
+    md += `## 2. Mô tả bài toán\n\n${desc}\n\n---\n\n`;
+    md += `## 3. Các module chính (ước lượng)\n\n*(AG-01 sẽ xác nhận lại sau khi đọc SRS đầy đủ)*\n\n`;
+    if (modules.length) {
+      modules.forEach(m => { md += `- [ ] **${m}**\n`; });
+    } else {
+      md += `- [ ] **[Module chưa được định nghĩa]**\n`;
+    }
+    md += `\n---\n\n## 4. Ràng buộc đặc biệt\n\n`;
+    if (cons.length) {
+      cons.forEach(c => { md += `- ${c}\n`; });
+    } else {
+      md += `- *(Không có ràng buộc đặc biệt)*\n`;
+    }
+    md += `\n---\n\n## 5. Lệnh khởi chạy\n\n\`\`\`bash\n${scenarioCmd[selectedScenario]}\n\`\`\`\n`;
+    return md;
+  }
+
+  function generateMD() {
+    const md = buildMD();
+    renderOutput(md);
+    document.getElementById('run-cmd').textContent = scenarioCmd[selectedScenario];
+    document.getElementById('output-section').style.display = 'block';
+    document.getElementById('output-section').scrollIntoView({behavior:'smooth', block:'start'});
+    showToast('✓ PROJECT_BRIEF.md đã được tạo!', '#22c55e');
+  }
+
+  function previewMD() {
+    generateMD();
+  }
+
+  function renderOutput(md) {
+    const box = document.getElementById('output-box');
+    // Simple syntax highlight
+    const lines = md.split('\n');
+    const html = lines.map(line => {
+      if (line.startsWith('# '))   return `<span class="c-heading">${esc(line)}</span>`;
+      if (line.startsWith('## '))  return `<span class="c-heading" style="color:#8ba3c7">${esc(line)}</span>`;
+      if (line.startsWith('> '))   return `<span class="c-comment">${esc(line)}</span>`;
+      if (line.startsWith('| '))   return `<span style="color:#c8d8f0">${esc(line)}</span>`;
+      if (line.startsWith('- [ ]'))return `<span class="c-task">${esc(line)}</span>`;
+      if (line.startsWith('- '))   return `<span class="c-val">${esc(line)}</span>`;
+      if (line.startsWith('```'))  return `<span class="c-comment">${esc(line)}</span>`;
+      if (line.startsWith('python')) return `<span class="c-val">${esc(line)}</span>`;
+      return esc(line);
+    }).join('\n');
+    box.innerHTML = html;
+  }
+
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  /* ═══════════════════════════════ COPY ════════ */
+  function copyOutput() {
+    const md = buildMD();
+    navigator.clipboard.writeText(md).then(() => {
+      const btn = document.getElementById('copy-btn');
+      btn.textContent = '✓ Đã copy!';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = '📋 Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+      showToast('✓ Đã copy vào clipboard!');
+    });
+  }
+
+  /* ═══════════════════════════════ RESET ════════ */
+  function resetForm() {
+    document.getElementById('proj-name').value = '';
+    document.getElementById('proj-client').value = '';
+    document.getElementById('proj-pm').value = '';
+    document.getElementById('proj-deadline').value = '';
+    document.getElementById('proj-desc').value = '';
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+    document.getElementById('output-section').style.display = 'none';
+    selectScenario(1);
+    showToast('↺ Form đã được reset', '#f59e0b');
+  }
+
+  /* ═══════════════════════════════ TOAST ═══════ */
+  function showToast(msg, color = '#22c55e') {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.style.borderColor = color + '60';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>

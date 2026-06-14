@@ -1,0 +1,121 @@
+<!-- MÔ TẢ: DFD Level 1 — THE FAT MILK. Data Flow Diagram: dữ liệu di chuyển giữa 6 process, 4 data store, 3 external entity. HTML/CSS layout, dark theme. -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFD Level 1 — The Fat Milk</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#080c14;color:#e2e8f0;font-family:'Inter',sans-serif;padding:24px}
+h1{text-align:center;font-size:22px;color:#3b9eff;margin-bottom:4px}
+.sub{text-align:center;font-size:13px;color:#64748b;margin-bottom:24px}
+.dfd{max-width:1100px;margin:0 auto}
+
+.section{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;justify-content:center}
+.section-title{width:100%;font-size:14px;font-weight:700;color:#3b9eff;margin-bottom:8px;padding-left:4px}
+
+.ext-entity{background:#1e293b;border:2px solid #3b82f6;border-radius:8px;padding:14px 20px;min-width:150px;text-align:center}
+.ext-entity h3{font-size:13px;color:#93c5fd}
+.ext-entity p{font-size:10px;color:#64748b;margin-top:4px}
+
+.process{background:#0f172a;border:2px solid #10b981;border-radius:50%;width:140px;height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.process h3{font-size:12px;color:#6ee7b7;margin-bottom:2px}
+.process .pid{font-size:10px;color:#10b981;font-weight:700}
+.process p{font-size:9px;color:#64748b;margin-top:2px}
+
+.data-store{background:#0f172a;border:1.5px solid #f59e0b;border-left:4px solid #f59e0b;border-radius:4px;padding:12px 16px;min-width:160px}
+.data-store h3{font-size:12px;color:#fcd34d}
+.data-store p{font-size:10px;color:#64748b;margin-top:2px}
+.data-store .did{font-size:10px;color:#f59e0b;font-weight:700}
+
+.flows{max-width:1100px;margin:0 auto;background:#0f172a;border:1px solid #1e3a5f;border-radius:12px;padding:20px}
+.flows h3{font-size:14px;color:#3b9eff;margin-bottom:12px}
+.flow-table{width:100%;font-size:11px;border-collapse:collapse}
+.flow-table th{text-align:left;padding:8px;border-bottom:2px solid #1e3a5f;color:#3b9eff;font-weight:600}
+.flow-table td{padding:6px 8px;border-bottom:1px solid #1e293b;color:#94a3b8}
+.flow-table tr:hover{background:#111827}
+.flow-table .from{color:#93c5fd}
+.flow-table .to{color:#6ee7b7}
+.flow-table .data{color:#e2e8f0;font-weight:500}
+.flow-table .arrow{color:#475569;text-align:center}
+</style>
+</head>
+<body>
+<h1>🔀 Data Flow Diagram (DFD Level 1) — The Fat Milk</h1>
+<p class="sub">Luồng dữ liệu giữa các Process, Data Store, và External Entity</p>
+
+<div class="dfd">
+
+<!-- EXTERNAL ENTITIES -->
+<div class="section">
+<div class="section-title">🔷 External Entities (Nguồn/Đích bên ngoài)</div>
+<div class="ext-entity"><h3>👤 Customer</h3><p>Khách hàng sử dụng PWA App</p></div>
+<div class="ext-entity"><h3>👷 Staff</h3><p>Nhân viên bán hàng tại POS</p></div>
+<div class="ext-entity"><h3>👑 Admin</h3><p>Chủ chuỗi quản lý hệ thống</p></div>
+<div class="ext-entity" style="border-color:#8b5cf6"><h3>💳 SePay</h3><p>Cổng thanh toán bên ngoài</p></div>
+<div class="ext-entity" style="border-color:#8b5cf6"><h3>📲 OTP Service</h3><p>Twilio / Firebase SMS</p></div>
+</div>
+
+<!-- PROCESSES -->
+<div class="section">
+<div class="section-title">🟢 Processes (Xử lý nghiệp vụ)</div>
+<div class="process"><div class="pid">P1</div><h3>Auth & User</h3><p>Đăng ký, OTP<br>Đăng nhập, JWT</p></div>
+<div class="process"><div class="pid">P2</div><h3>Product & Inventory</h3><p>CRUD SP, Kho<br>Gallery, Combo</p></div>
+<div class="process"><div class="pid">P3</div><h3>Order Processing</h3><p>Tạo đơn, Lock<br>Trừ kho, Thanh toán</p></div>
+<div class="process"><div class="pid">P4</div><h3>Wallet & Payment</h3><p>Nạp/trừ ví<br>SePay Webhook</p></div>
+<div class="process"><div class="pid">P5</div><h3>CRM & Loyalty</h3><p>Hạng, Điểm<br>Voucher, Flash Sale</p></div>
+<div class="process"><div class="pid">P6</div><h3>Report & Analytics</h3><p>Doanh thu, Top SP<br>Ví tổng</p></div>
+</div>
+
+<!-- DATA STORES -->
+<div class="section">
+<div class="section-title">🟡 Data Stores (Lưu trữ)</div>
+<div class="data-store"><div class="did">D1</div><h3>Users & Auth</h3><p>users, customer_tiers, staff_branches</p></div>
+<div class="data-store"><div class="did">D2</div><h3>Products & Inventory</h3><p>products, categories, product_images, inventory, inventory_logs</p></div>
+<div class="data-store"><div class="did">D3</div><h3>Orders</h3><p>orders, order_items, vouchers, voucher_usage</p></div>
+<div class="data-store"><div class="did">D4</div><h3>Finance</h3><p>wallets, wallet_transactions, points_ledger, sepay_transactions</p></div>
+</div>
+
+</div>
+
+<!-- FLOW TABLE -->
+<div class="flows">
+<h3>📈 Chi tiết luồng dữ liệu</h3>
+<table class="flow-table">
+<thead>
+<tr><th>#</th><th>Từ</th><th></th><th>Đến</th><th>Dữ liệu</th></tr>
+</thead>
+<tbody>
+<tr><td>F1</td><td class="from">Customer</td><td class="arrow">→</td><td class="to">P1 Auth</td><td class="data">SĐT, Password, OTP</td></tr>
+<tr><td>F2</td><td class="from">P1 Auth</td><td class="arrow">→</td><td class="to">OTP Service</td><td class="data">Yêu cầu gửi SMS OTP</td></tr>
+<tr><td>F3</td><td class="from">P1 Auth</td><td class="arrow">↔</td><td class="to">D1 Users</td><td class="data">User profile, tier, credentials</td></tr>
+<tr><td>F4</td><td class="from">P1 Auth</td><td class="arrow">→</td><td class="to">Customer</td><td class="data">JWT Access + Refresh Token</td></tr>
+<tr><td>F5</td><td class="from">Admin</td><td class="arrow">→</td><td class="to">P2 Product</td><td class="data">Thông tin SP, Ảnh, Danh mục, Tồn kho</td></tr>
+<tr><td>F6</td><td class="from">P2 Product</td><td class="arrow">↔</td><td class="to">D2 Products</td><td class="data">CRUD products, categories, inventory</td></tr>
+<tr><td>F7</td><td class="from">Customer</td><td class="arrow">→</td><td class="to">P2 Product</td><td class="data">Tìm kiếm, lọc SP theo chi nhánh</td></tr>
+<tr><td>F8</td><td class="from">P2 Product</td><td class="arrow">→</td><td class="to">Customer</td><td class="data">Danh sách SP + giá theo hạng + allergens</td></tr>
+<tr><td>F9</td><td class="from">Customer</td><td class="arrow">→</td><td class="to">P3 Order</td><td class="data">Items, voucher, points, delivery, payment</td></tr>
+<tr><td>F10</td><td class="from">Staff</td><td class="arrow">→</td><td class="to">P3 Order</td><td class="data">POS order: barcode scan, CRM lookup</td></tr>
+<tr><td>F11</td><td class="from">P3 Order</td><td class="arrow">→</td><td class="to">D2 Products</td><td class="data">Trừ stock (SELECT FOR UPDATE)</td></tr>
+<tr><td>F12</td><td class="from">P3 Order</td><td class="arrow">→</td><td class="to">D3 Orders</td><td class="data">INSERT order + order_items</td></tr>
+<tr><td>F13</td><td class="from">P3 Order</td><td class="arrow">→</td><td class="to">P4 Wallet</td><td class="data">Yêu cầu trừ ví (nếu payment=wallet)</td></tr>
+<tr><td>F14</td><td class="from">P3 Order</td><td class="arrow">→</td><td class="to">P5 CRM</td><td class="data">Cộng total_spent, tính điểm, đánh giá hạng</td></tr>
+<tr><td>F15</td><td class="from">Customer</td><td class="arrow">→</td><td class="to">P4 Wallet</td><td class="data">Yêu cầu nạp tiền (số tiền)</td></tr>
+<tr><td>F16</td><td class="from">P4 Wallet</td><td class="arrow">→</td><td class="to">SePay</td><td class="data">Tạo QR Code động</td></tr>
+<tr><td>F17</td><td class="from">SePay</td><td class="arrow">→</td><td class="to">P4 Wallet</td><td class="data">Webhook: xác nhận CK thành công</td></tr>
+<tr><td>F18</td><td class="from">P4 Wallet</td><td class="arrow">↔</td><td class="to">D4 Finance</td><td class="data">UPDATE balance, INSERT transactions</td></tr>
+<tr><td>F19</td><td class="from">Admin</td><td class="arrow">→</td><td class="to">P5 CRM</td><td class="data">Cấu hình hạng, voucher, flash sale</td></tr>
+<tr><td>F20</td><td class="from">P5 CRM</td><td class="arrow">↔</td><td class="to">D1 Users</td><td class="data">UPDATE tier, total_spent, points_balance</td></tr>
+<tr><td>F21</td><td class="from">P5 CRM</td><td class="arrow">↔</td><td class="to">D3 Orders</td><td class="data">Voucher validation, usage tracking</td></tr>
+<tr><td>F22</td><td class="from">Admin</td><td class="arrow">→</td><td class="to">P6 Report</td><td class="data">Yêu cầu báo cáo (bộ lọc thời gian, chi nhánh)</td></tr>
+<tr><td>F23</td><td class="from">P6 Report</td><td class="arrow">←</td><td class="to">D3 Orders</td><td class="data">Aggregate: doanh thu, đơn hàng, top SP</td></tr>
+<tr><td>F24</td><td class="from">P6 Report</td><td class="arrow">←</td><td class="to">D4 Finance</td><td class="data">Tổng ví, đối soát SePay</td></tr>
+<tr><td>F25</td><td class="from">P6 Report</td><td class="arrow">→</td><td class="to">Admin</td><td class="data">Biểu đồ doanh thu, báo cáo, dashboard</td></tr>
+</tbody>
+</table>
+</div>
+
+</body>
+</html>
