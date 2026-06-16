@@ -17,7 +17,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 - [x] **M0-BE-08:** Khai báo file `prisma.service.ts` quản lý connection.
 
 #### Frontend Foundation
-- [ ] **M0-FE-01:** Khởi tạo thư mục `Frontend` bằng `npx create-next-app@14` (App Router, Tailwind CSS, TypeScript).
+- [x] **M0-FE-01:** Khởi tạo thư mục `Frontend` bằng `npx create-next-app@14` (App Router, Tailwind CSS, TypeScript).
 - [ ] **M0-FE-02:** Cài đặt `shadcn-ui`, cấu hình `components.json`, `tailwind.config.ts`.
 - [ ] **M0-FE-03:** Setup PWA config (`manifest.json`, icon 1024x1024) [REQ-F-001].
 - [ ] **M0-FE-04:** Tạo layout root chia route: `/(pwa)/`, `/admin/`, `/pos/`. Thiết lập Header cố định và Bottom Navigation [REQ-F-004, REQ-F-011].
