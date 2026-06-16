@@ -28,7 +28,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 ### MODULE 1: M-AUTH (Tài khoản & Xác thực)
 
 #### Backend
-- [ ] **M1-BE-DB-01:** Định nghĩa schema `users`, `customer_tiers`, `otp_codes`, `branches`, `staff_branches` vào `schema.prisma`. Migrate DB.
+- [x] **M1-BE-DB-01:** Định nghĩa schema `users`, `customer_tiers`, `otp_codes`, `branches`, `staff_branches` vào `schema.prisma`. Migrate DB.
 - [ ] **M1-BE-DM-01:** Định nghĩa `RoleEnum` (Admin, Staff, Customer) [REQ-F-052] và `UserEntity`.
 - [ ] **M1-BE-IF-01:** Code `BcryptPasswordService` (hash pass) [REQ-NF-002].
 - [ ] **M1-BE-IF-02:** Code `JwtTokenService` và `DbOtpService` (TTL 5 phút).
