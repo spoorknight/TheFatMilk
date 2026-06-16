@@ -1,8 +1,8 @@
 # 📊 BẢNG THEO DÕI TIẾN ĐỘ DỰ ÁN
 
 **Dự án:** [Tên Dự Án]
-**Trạng thái tổng thể:** ⏹️ Chưa bắt đầu
-**Lần cập nhật cuối:** 2026-06-13 00:41:22 (Tự động bởi Orchestrator)
+**Trạng thái tổng thể:** ⏳ Đang xử lý (Đã xong Phase 2, chuẩn bị Phase 3)
+**Lần cập nhật cuối:** 2026-06-16 (Bởi: AG-02)
 
 > **Quy tắc cho Agent:**
 >
@@ -29,41 +29,41 @@
 ---
 
 ## 🌍 GIAI ĐOẠN 1: PHÂN TÍCH YÊU CẦU (AG-01 — Business Analyst)
-**Trạng thái:** ⏳ Đang xử lý
+**Trạng thái:** ✅ Đã hoàn thành (Bởi: AG-01)
 
 > **Input:** Tài liệu thô từ khách hàng (SRS, PRD, email, brief...) → để vào `01_Analyst/Inputs/`
 
-* [ ] Task 1.1: Đọc toàn bộ tài liệu gốc → Xuất **`01_Analyst/Outputs/Requirements_Spec.md`** (Functional + Non-Functional requirements, có mã REQ-F-xxx). *(Status: Pending)*
-* [ ] Task 1.2: Bóc tách user story theo module → Xuất **`01_Analyst/Outputs/Product_Backlog.md`** (ưu tiên Must/Should/Could, effort point). *(Status: Pending)*
-* [ ] Task 1.3: Định nghĩa thuật ngữ nghiệp vụ → Xuất **`01_Analyst/Outputs/Glossary.md`**. *(Status: Pending)*
-* [ ] Task 1.4: Xác định rủi ro → Xuất **`01_Analyst/Outputs/Risk_Register.md`** (severity: Critical/High/Medium/Low, mitigation). *(Status: Pending)*
-* [ ] **[HUMAN CHECKPOINT]** PM review Requirements_Spec.md — xác nhận đúng yêu cầu trước khi AG-02 thiết kế. *(Status: Pending)*
-* [ ] **[CHECKPOINT]** 4 file output hoàn chỉnh. Chuyển sang Phase 2.
+* [x] Task 1.1: Đọc toàn bộ tài liệu gốc → Xuất **`01_Analyst/Outputs/Requirements_Spec.md`** (Functional + Non-Functional requirements, có mã REQ-F-xxx). *(Status: Done)*
+* [x] Task 1.2: Bóc tách user story theo module → Xuất **`01_Analyst/Outputs/Product_Backlog.md`** (ưu tiên Must/Should/Could, effort point). *(Status: Done)*
+* [x] Task 1.3: Định nghĩa thuật ngữ nghiệp vụ → Xuất **`01_Analyst/Outputs/Glossary.md`**. *(Status: Done)*
+* [x] Task 1.4: Xác định rủi ro → Xuất **`01_Analyst/Outputs/Risk_Register.md`** (severity: Critical/High/Medium/Low, mitigation). *(Status: Done)*
+* [x] **[HUMAN CHECKPOINT]** PM review Requirements_Spec.md — xác nhận đúng yêu cầu trước khi AG-02 thiết kế. *(Status: Done)*
+* [x] **[CHECKPOINT]** 4 file output hoàn chỉnh. Chuyển sang Phase 2.
 
 ---
 
 ## 📐 GIAI ĐOẠN 2: THIẾT KẾ KIẾN TRÚC HỆ THỐNG (AG-02 — System Architect)
-**Trạng thái:** ⏹️ Chưa bắt đầu
+**Trạng thái:** ✅ Đã hoàn thành (Bởi: AG-02)
 
 > **Input:** Toàn bộ outputs Phase 1 + Legacy files (nếu Scenario 2/3)
 
 ### 📄 Tài liệu kiến trúc (lưu vào `02_Architect/Outputs/`)
-* [ ] Task 2.1: Thiết kế C4 diagram + chọn tech stack → Xuất **`System_Architecture.md`**. *(Status: Pending)*
-* [ ] Task 2.2: Phân tách module, dependency graph, thứ tự implement → Xuất **`Module_Breakdown.md`**. *(Status: Pending)*
-* [ ] Task 2.3: Định nghĩa tất cả endpoints → Xuất **`API_Contracts.md`** (method, path, request/response schema, error codes). *(Status: Pending)*
-* [ ] Task 2.4: Thiết kế database → Xuất **`Database_Schema.md`** (DDL, index, constraint, soft-delete policy). *(Status: Pending)*
-* [ ] Task 2.5: Ghi lại quyết định kiến trúc → Xuất **`ADR.md`** (vấn đề → lựa chọn → lý do). *(Status: Pending)*
-* [ ] Task 2.6 *(Scenario 2/3)*: Map kiến trúc hệ thống cũ → Xuất **`Legacy_Architecture.md`**. *(Status: Pending)*
+* [x] Task 2.1: Thiết kế C4 diagram + chọn tech stack → Xuất **`System_Architecture.md`**. *(Status: Done)*
+* [x] Task 2.2: Phân tách module, dependency graph, thứ tự implement → Xuất **`Module_Breakdown.md`**. *(Status: Done)*
+* [x] Task 2.3: Định nghĩa tất cả endpoints → Xuất **`API_Contracts.md`** (method, path, request/response schema, error codes). *(Status: Done)*
+* [x] Task 2.4: Thiết kế database → Xuất **`Database_Schema.md`** (DDL, index, constraint, soft-delete policy). *(Status: Done)*
+* [x] Task 2.5: Ghi lại quyết định kiến trúc → Xuất **`ADR.md`** (vấn đề → lựa chọn → lý do). *(Status: Done)*
+* [ ] Task 2.6 *(Scenario 2/3)*: Map kiến trúc hệ thống cũ → Xuất **`Legacy_Architecture.md`**. *(Status: Skipped - Greenfield)*
 
 ### 📐 Diagrams bắt buộc (lưu vào `02_Architect/Outputs/Diagrams/`)
-* [ ] Task 2.7: Vẽ ERD → Xuất **`ERD.md`** (Mermaid, quan hệ bảng, FK, cardinality). *(Status: Pending)*
-* [ ] Task 2.8: Vẽ Sequence Diagram → Xuất **`Sequence_Diagram.md`** (luồng gọi Client→Controller→Service→Repository→DB). *(Status: Pending)*
-* [ ] Task 2.9: Vẽ tổng quan layer → Xuất **`System_Architecture_Diagram.md`** (FE/BE/DB/External Services). *(Status: Pending)*
-* [ ] Task 2.10: Vẽ luồng dữ liệu → Xuất **`DFD_Level1.md`** (data flow giữa các module). *(Status: Pending)*
-* [ ] Task 2.11 *(Scenario 3)*: Reverse-engineer codebase cũ → Xuất **`Legacy_ERD.md`** + **`Legacy_CallFlow.md`**. *(Status: Pending)*
+* [x] Task 2.7: Vẽ ERD → Xuất **`ERD.md`** (Mermaid, quan hệ bảng, FK, cardinality). *(Status: Done - HTML SVG)*
+* [x] Task 2.8: Vẽ Sequence Diagram → Xuất **`Sequence_Diagram.md`** (luồng gọi Client→Controller→Service→Repository→DB). *(Status: Done - HTML SVG)*
+* [x] Task 2.9: Vẽ tổng quan layer → Xuất **`System_Architecture_Diagram.md`** (FE/BE/DB/External Services). *(Status: Done - HTML SVG)*
+* [x] Task 2.10: Vẽ luồng dữ liệu → Xuất **`DFD_Level1.md`** (data flow giữa các module). *(Status: Done - HTML SVG)*
+* [ ] Task 2.11 *(Scenario 3)*: Reverse-engineer codebase cũ → Xuất **`Legacy_ERD.md`** + **`Legacy_CallFlow.md`**. *(Status: Skipped)*
 
-* [ ] **[HUMAN CHECKPOINT]** PM duyệt Database Schema và API Contracts trước khi AG-03 code. *(Status: Pending)*
-* [ ] **[CHECKPOINT]** Hoàn thiện blueprint hệ thống (≥10 file). Chuyển sang Phase 3.
+* [x] **[HUMAN CHECKPOINT]** PM duyệt Database Schema và API Contracts trước khi AG-03 code. *(Status: Done)*
+* [x] **[CHECKPOINT]** Hoàn thiện blueprint hệ thống (≥10 file). Chuyển sang Phase 3.
 
 ---
 
