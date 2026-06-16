@@ -1,0 +1,17 @@
+{
+  "name": "The Fat Milk",
+  "short_name": "Fat Milk",
+  "description": "The Fat Milk POS & E-commerce System",
+  "start_url": "/(pwa)",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}
