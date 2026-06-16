@@ -1,119 +1,92 @@
-# BẢN KẾ HOẠCH TRIỂN KHAI (IMPLEMENTATION PLAN) - THE FAT MILK
+# IMPLEMENTATION PLAN: CHI TIẾT SPRINT 1 (FOUNDATION)
 
-**Kịch bản:** Scenario 1 - Greenfield (Xây dựng từ đầu)
+**Kịch bản:** Scenario 1 - Greenfield
 **Agent:** AG-03 (Developer)
 **Trạng thái:** Chờ PM phê duyệt
+**Mô tả:** Bản kế hoạch siêu chi tiết chia đến từng file/class/use-case cho 5 Module cốt lõi của Sprint 1 (M-AUTH, M-BRANCH, M-PRODUCT, M-INVENTORY, M-CRM) theo kiến trúc Clean Architecture. 
 
 ---
 
-## 1. Tổng quan
-Theo thiết kế từ AG-02, hệ thống The Fat Milk (Next.js + Node.js + PostgreSQL) được chia thành 16 Module độc lập.
-Trong Sprint 1 và 2, AG-03 sẽ tập trung xây dựng toàn bộ **Boilerplate Clean Architecture** và triển khai 9 Module Backend cốt lõi phục vụ Foundation và Financial.
+## 1. MODULE M-AUTH (Auth & Users)
+**Đầu ra (Output):** `src/modules/auth/` và `src/core/`
+
+### Phase 1.1: Core Boilerplate & Database Schema
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M1-T01** | Core | `src/core/middlewares/error.middleware.ts`<br>`src/core/config/env.ts` | Khởi tạo Express app, cấu hình Zod Error parser. | Bắt toàn bộ lỗi, map với Error Codes ở `API_Contracts.md`. |
+| **S1-M1-T02** | Core | `prisma/schema.prisma`<br>`src/core/database/prisma.ts` | Định nghĩa bảng `users`, `otp_codes`, `customer_tiers`. Chạy DB Migrate. | Field `phone` UNIQUE, `is_deleted` default false. |
+| **S1-M1-T03** | Domain | `src/modules/auth/domain/entities/user.entity.ts`<br>`role.enum.ts` | Định nghĩa class UserEntity thuần túy không lệ thuộc DB. | — |
+
+### Phase 1.2: Infrastructure & Use Cases
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M1-T04** | Infra | `src/modules/auth/infrastructure/repositories/prisma-user.repository.ts` | Implement `IUserRepository` thao tác với Prisma. | Loại bỏ is_deleted=true. |
+| **S1-M1-T05** | Infra | `src/modules/auth/infrastructure/services/jwt-token.service.ts`<br>`mock-otp.service.ts` | Setup JWT Sign/Verify và Mock SMS. | Tách biệt domain và library. |
+| **S1-M1-T06** | App | `src/modules/auth/application/use-cases/register.usecase.ts` | Nhận đầu vào -> Hash password -> Gửi OTP. | Bắn `ERR_DUPLICATE` nếu trùng SĐT. |
+| **S1-M1-T07** | App | `src/modules/auth/application/use-cases/verify-otp.usecase.ts` | So khớp OTP, cấp Token. | Trả `{ user, access_token, refresh_token }`. |
+| **S1-M1-T08** | App | `src/modules/auth/application/use-cases/login.usecase.ts` | So khớp password, cấp Token. | Bắn `ERR_UNAUTHORIZED` nếu sai. |
+| **S1-M1-T09** | App | Use Cases: Get/Update Profile, Forgot/Reset Password. | Cập nhật thông tin cơ bản. | — |
+
+### Phase 1.3: Presentation
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M1-T10** | API | `src/core/middlewares/auth.middleware.ts` | Decode token, nhét `req.user`. | Bắn `ERR_UNAUTHORIZED`. |
+| **S1-M1-T11** | API | `src/modules/auth/api/auth.schema.ts`<br>`auth.controller.ts`<br>`auth.routes.ts` | Map endpoint HTTP POST/GET với Use Case. | Chỉ wrap `{ success, data, message }`. |
 
 ---
 
-> [!IMPORTANT]
-> ## User Review Required
-> Vui lòng xác nhận cách thức tổ chức source code cho Backend:
-> AG-03 sẽ chia source code theo Clean Architecture (chia thư mục theo từng module, ví dụ: `src/modules/auth/domain/`, `src/modules/auth/application/`, `src/modules/auth/infrastructure/`, `src/modules/auth/api/`). PM có đồng ý với cấu trúc `Module-first` này không?
-> 
-> Xin PM phê duyệt kế hoạch chi tiết cho các Module thuộc Sprint 1 & 2 để AG-03 bắt đầu bước vào Sprint 2 (Implementation).
+## 2. MODULE M-BRANCH (Branch Management)
+**Đầu ra (Output):** `src/modules/branch/`
 
-## 2. Phạm vi công việc (Scope)
-
-| In-scope | Out-of-scope |
-|----------|--------------|
-| Khởi tạo Boilerplate Node.js + Express + Prisma + TypeScript | Chưa code logic Frontend UI (PWA/POS/Admin) ở giai đoạn này. |
-| Triển khai Sprint 1: M-AUTH, M-BRANCH, M-PRODUCT, M-INVENTORY, M-CRM | Tích hợp các SDK ngoại lai nằm ngoài API_Contracts. |
-| Triển khai Sprint 2: M-WALLET, M-SEPAY, M-POINTS, M-VOUCHER | Triển khai Docker, CI/CD thực tế (Deploy). |
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M2-T01** | Domain & DB| `prisma/schema.prisma` | Bảng `branches` với lat/lng. Entity Branch. | Prisma Migrate. |
+| **S1-M2-T02** | Infra | `src/modules/branch/infrastructure/repositories/...` | Implement `PrismaBranchRepository`. | Hàm `findNearest(lat, lng)`. |
+| **S1-M2-T03** | App | `src/modules/branch/application/use-cases/...` | Use Cases: Create, Update, Delete, FindNearest. | Tính toán Haversine hoặc order by khoảng cách. |
+| **S1-M2-T04** | API | `src/modules/branch/api/branch.controller.ts` | Bọc Validation, `auth.middleware`, check role Admin (cho Write). | Các API public GET cho phép truy cập. |
 
 ---
 
-## 3. Danh sách Task chi tiết (Sprint 1 & Sprint 2)
+## 3. MODULE M-PRODUCT (Product Catalog)
+**Đầu ra (Output):** `src/modules/product/`
 
-### SPRINT 1 — FOUNDATION (BACKEND CORE)
-
-#### Module: M-AUTH (Auth & Users)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S1-M1-01 | Setup | Tạo thư mục Clean Architecture, Prisma Schema (`users` table), Error handling Middleware. | `src/core/`, `prisma/schema.prisma` | Boilerplate chuẩn. |
-| S1-M1-02 | Domain | Entity User, Role Enum. | `src/modules/auth/domain/` | Không phụ thuộc DB. |
-| S1-M1-03 | Infra | User Repository (Prisma), JWT Utility, OTP Adapter (mock/Firebase). | `src/modules/auth/infrastructure/` | Xử lý DB & Token. |
-| S1-M1-04 | App | Use Cases: Đăng ký, Đăng nhập, Verify OTP, Refresh Token. | `src/modules/auth/application/` | Logic nghiệp vụ chính. |
-| S1-M1-05 | API | Controller & Router: `/api/auth/*` | `src/modules/auth/api/` | Validation bằng Zod. |
-
-#### Module: M-BRANCH (Branch Management)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S1-M2-01 | Domain & DB | Entity Branch, Prisma Schema (`branches` table). | `src/modules/branch/domain/` | — |
-| S1-M2-02 | App & Infra | Repository, Use Cases: CRUD Branch. | `src/modules/branch/application/` | — |
-| S1-M2-03 | API | Controller & Router: `/api/branches/*` | `src/modules/branch/api/` | RBAC: Admin write. |
-
-#### Module: M-PRODUCT (Product Catalog)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S1-M3-01 | Domain & DB | Entity Category, Product, ProductImage, ComboProduct. | `src/modules/product/domain/` | — |
-| S1-M3-02 | App & Infra | Repositories, Upload Image Adapter (Local Disk `/uploads/`), Use Cases: CRUD Product, CRUD Category. | `src/modules/product/application/` | Local file storage. |
-| S1-M3-03 | API | Controller & Router: `/api/products/*`, `/api/categories/*` | `src/modules/product/api/` | Include allergens. |
-
-#### Module: M-INVENTORY (Inventory Control)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S1-M4-01 | Domain & DB | Entity Inventory, InventoryLogs, StockTransfers. | `src/modules/inventory/domain/` | — |
-| S1-M4-02 | App & Infra | Repo, Use Cases: Update Stock, Get Logs, Transfer Stock. | `src/modules/inventory/application/` | Khóa kho (Transaction). |
-| S1-M4-03 | API | Controller & Router: `/api/inventory/*` | `src/modules/inventory/api/` | RBAC: Admin & Staff. |
-
-#### Module: M-CRM (CRM & Tiers)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S1-M5-01 | Domain & DB | Entity CustomerTier. | `src/modules/crm/domain/` | — |
-| S1-M5-02 | App & Infra | Use Cases: Update Tiers, Evalute Tier, POS Lookup. | `src/modules/crm/application/` | Logic tính tổng chi tiêu. |
-| S1-M5-03 | API | Controller & Router: `/api/crm/*` | `src/modules/crm/api/` | Lookup = Read. |
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M3-T01** | DB | `prisma/schema.prisma` | Bảng `products`, `categories`, `product_images`, `combo_products`. | Ràng buộc Foreign Key CASCADE. |
+| **S1-M3-T02** | Infra | `src/modules/product/infrastructure/services/local-storage.service.ts` | Upload file dùng `fs`. Ghi ra `root/uploads/`. | — |
+| **S1-M3-T03** | App | `src/modules/product/application/use-cases/upload-image.usecase.ts` | Nhận buffer, ghi ra đĩa, tạo bản ghi `product_images`. | Giới hạn định dạng JPG, PNG. |
+| **S1-M3-T04** | App | Use Cases cho CRUD Product và Category. | Query kèm (include) relationships. | Check SKU duy nhất. |
+| **S1-M3-T05** | API | `src/modules/product/api/product.controller.ts`<br>`src/core/middlewares/upload.middleware.ts` | Setup `multer`. Map routes. | Mở `express.static('/uploads')` ở `app.ts`. |
 
 ---
 
-### SPRINT 2 — FINANCIAL CORE
+## 4. MODULE M-INVENTORY (Inventory Control)
+**Đầu ra (Output):** `src/modules/inventory/`
 
-#### Module: M-WALLET (E-Wallet)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S2-M6-01 | Domain & DB | Entity Wallet, WalletTransaction. | `src/modules/wallet/domain/` | Số dư `balance >= 0`. |
-| S2-M6-02 | App & Infra | Use Cases: Topup, Deduct, Get Balance. DB Transaction Lock (`SELECT FOR UPDATE`). | `src/modules/wallet/application/` | Chống Race condition. |
-| S2-M6-03 | API | Controller & Router: `/api/wallet/*` | `src/modules/wallet/api/` | Xác thực Idempotency. |
-
-#### Module: M-SEPAY (SePay Integration)
-| Task ID | Loại | Mô tả chi tiết | File output | Constraint |
-|---------|------|----------------|-------------|------------|
-| S2-M7-01 | App & Infra | SePayAdapter (HMAC verify), Webhook Handler (Giao tiếp với M-WALLET). | `src/modules/sepay/application/` | Payload signature. |
-| S2-M7-02 | API | Controller & Router: `/api/webhook/sepay` | `src/modules/sepay/api/` | Phải trả về HTTP 200 OK ngay. |
-
-*(Các module còn lại (Points, Voucher, Order, Delivery, Frontend...) sẽ được lập kế hoạch chi tiết trong đợt tiếp theo sau khi hoàn tất Sprint 2 Backend)*
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M4-T01** | DB | `prisma/schema.prisma` | Bảng `inventory`, `inventory_logs`, `stock_transfers`. | Unique(product_id, branch_id). |
+| **S1-M4-T02** | Infra | `src/modules/inventory/infrastructure/repositories/prisma-inventory.repository.ts` | Transaction Prisma: Update Inventory & Write Log cùng lúc. | **Cực kỳ quan trọng.** |
+| **S1-M4-T03** | App | `src/modules/inventory/application/use-cases/adjust-stock.usecase.ts` | Gọi Transaction Repository phía trên. | Ko cho phép tồn < 0. |
+| **S1-M4-T04** | App | `src/modules/inventory/application/use-cases/transfer.usecase.ts` | Trừ kho xuất, cộng kho nhập. | Trạng thái phiếu: pending -> completed. |
+| **S1-M4-T05** | API | `src/modules/inventory/api/inventory.controller.ts` | Map routes. Check role Admin/Staff. | — |
 
 ---
 
-## 4. Dependency Map
+## 5. MODULE M-CRM (CRM & Tiers)
+**Đầu ra (Output):** `src/modules/crm/`
 
-| Task | Phụ thuộc vào | Lý do |
-|------|--------------|-------|
-| M-BRANCH | M-AUTH | Dùng chung JWT auth middleware và DB connection. |
-| M-PRODUCT | M-BRANCH, M-AUTH | Có ràng buộc RBAC Admin. |
-| M-INVENTORY | M-PRODUCT, M-BRANCH | Cần Product và Branch tồn tại để ánh xạ tồn kho. |
-| M-CRM | M-AUTH | Cập nhật Tier trực tiếp trên user (User Table). |
-| M-WALLET | M-AUTH | Mỗi user có 1 ví. |
-| M-SEPAY | M-WALLET | Webhook SePay cộng tiền trực tiếp vào M-WALLET. |
-
----
-
-## 5. Định nghĩa Done (Definition of Done)
-
-Task được coi là DONE khi:
-- [ ] Code pass syntax check (TypeScript `tsc --noEmit`).
-- [ ] Đã chạy Prisma Generate và Migration thành công.
-- [ ] Error handling trả về đúng format chung của hệ thống.
-- [ ] Không hardcode (sử dụng `.env`).
-- [ ] `Changelog.md` trong từng thư mục xuất ra được cập nhật đầy đủ.
-- [ ] Mọi API Endpoint phải map 100% với `API_Contracts.md`.
+| Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
+|---------|-------------|----------------------|-----------|------------|
+| **S1-M5-T01** | DB | `prisma/seed.ts` | Seed data Bronze, Silver, Gold, Diamond. | — |
+| **S1-M5-T02** | App | `src/modules/crm/application/use-cases/evaluate-tier.usecase.ts` | So sánh `total_spent` của user hiện tại với list Tiers để thăng/xuống hạng. | Gọi Update User Repository. |
+| **S1-M5-T03** | App | `src/modules/crm/application/use-cases/lookup.usecase.ts` | Trả về tổng quan User (Wallet, Point, Tier, Spent) cho POS. | — |
+| **S1-M5-T04** | API | `src/modules/crm/api/crm.controller.ts` | Map endpoints (`/my-tier`, `/lookup`, `/evaluate`). | — |
 
 ---
-## 6. Lời kết
-Kính gửi PM, vui lòng xem xét bản Implementation Plan này. Nếu PM Approve, AG-03 sẽ tiến hành **Task S1-M1-01** (Setup Boilerplate, M-AUTH).
+
+## 6. Định nghĩa Done của 1 Task (Definition of Done)
+1. **Cô lập:** Code chỉ thực thi duy nhất phần logic được chỉ định.
+2. **Không lỗi (No Error):** Chạy lệnh `npx tsc --noEmit` không báo đỏ. Đã chạy Prisma Migration.
+3. **Lưu lịch sử:** Báo cáo vào file `Changelog.md` sau khi hoàn tất.
+4. **Clean Code:** Luôn luôn Type Hinting (TypeScript) đầy đủ. Không dùng `any`. Không bỏ business logic vào Controller.
