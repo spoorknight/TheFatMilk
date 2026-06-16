@@ -13,7 +13,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 - [x] **M0-BE-04:** Viết Global Error Middleware (`error.middleware.ts`).
 - [x] **M0-BE-05:** Viết file `app.ts` (Entry point) gắn CORS, Helmet, JSON Parser và Error Middleware. Khai báo script `dev` bằng Nodemon.
 - [x] **M0-BE-06:** Tạo `docker-compose.yml` định nghĩa PostgreSQL 16 và Redis 7.
-- [ ] **M0-BE-07:** Cài đặt Prisma và chạy `npx prisma init`.
+- [x] **M0-BE-07:** Cài đặt Prisma và chạy `npx prisma init`.
 - [ ] **M0-BE-08:** Khai báo file `prisma.service.ts` quản lý connection.
 
 #### Frontend Foundation
