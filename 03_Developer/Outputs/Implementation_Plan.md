@@ -1,108 +1,67 @@
-# IMPLEMENTATION PLAN: SPRINT 1 & 2 (FOUNDATION & FINANCIAL CORE)
+# Kế hoạch Triển khai Chi tiết (Granular Parallel Plan)
 
-**Kịch bản:** Scenario 1 - Greenfield (Phân rã mức Class/File/Logic)
-**Agent:** AG-03 (Developer)
-**Trạng thái:** Đang thực thi (Sprint 1)
-**Thư mục làm việc (Working Dir):** `03_Developer/Outputs/Source_Code/Backend/`
-
-Bản kế hoạch này đã được tham chiếu chéo chắt chẽ với `Requirements_Spec.md`, `Database_Schema.md` và `API_Contracts.md` nhằm bảo đảm KHÔNG bỏ sót bất kỳ một Business Logic hay Non-functional Requirement nào (đặc biệt là Row-level locking, Idempotency, Logic hạ hạng, Mã hóa HMAC).
+Bản kế hoạch này phân rã công việc đến mức độ **từng File/Logic đơn lẻ** nhằm đảm bảo mỗi task được thực thi cực kỳ tinh gọn, dễ dàng review và đối soát với tài liệu kỹ thuật.
 
 ---
 
-## SPRINT 1: BACKEND FOUNDATION
+### MODULE 0: FOUNDATION (Thiết lập Nền tảng)
 
-### 1. MODULE M-AUTH (Core, Users & Staff)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| [x] **S1-M1-T00** | Infra | `docker-compose.yml`, `.env` | Setup PostgreSQL 16 & Redis 7. Đảm bảo chạy trước khi migrate. |
-| [x] **S1-M1-T01** | Core | `src/core/middlewares/error.middleware.ts` | Bắt Validation Error (Zod), JWT Error, Custom AppError -> xuất HTTP 400/401/403/404/500 tương ứng. |
-| [x] **S1-M1-T02** | DB | `prisma/schema.prisma` | Bảng `users`, `otp_codes`, `staff_branches`. Tích hợp Prisma Init & Migrate. Set `phone` UNIQUE, `is_deleted` = false. |
-| [x] **S1-M1-T03** | Domain | `src/modules/auth/domain/...` | Entity `User`. Interface `IUserRepository`, `ITokenService`, `IOtpService`. |
-| [x] **S1-M1-T04** | Infra | `src/modules/auth/infrastructure/...` | Implement JWT Service (expires), OTP Service (lưu OTP vào bảng `otp_codes` hoặc Redis với TTL 5 phút, bcrypt hash mật khẩu). |
-| [x] **S1-M1-T05** | App | `register.usecase.ts` | **Nghiệp vụ:** Nhận SĐT, Tên, Pass -> Băm pass -> Check trùng SĐT (`ERR_DUPLICATE`) -> Sinh OTP & lưu. |
-| **S1-M1-T06** | App | `verify-otp.usecase.ts`, `login.usecase.ts` | **Nghiệp vụ:** So OTP -> Đổi state sang active -> Cấp Access/Refresh Token. Đăng nhập: check pass. |
-| **S1-M1-T07** | App | `profile.usecase.ts`, `password.usecase.ts` | **Nghiệp vụ:** Get/Update Profile. Quên mật khẩu: Yêu cầu SĐT -> Gửi OTP -> Xác thực OTP -> Cập nhật pass mới. |
-| **S1-M1-T08** | API | `auth.controller.ts`, `auth.middleware.ts` | Bọc Zod Validation. Phân quyền Role-based (`Admin`, `Staff`, `Customer`). |
+#### Backend Foundation
+- [ ] **M0-BE-01:** Khởi tạo thư mục `Backend`, chạy `npm init`, cài đặt các package cơ bản (express, typescript, dotenv, zod) và setup `tsconfig.json`.
+- [ ] **M0-BE-02:** Tạo file `.env` mẫu và `src/core/config/env.ts` dùng Zod để parse và validate biến môi trường.
+- [ ] **M0-BE-03:** Viết các Custom Error classes (`src/core/errors/app.error.ts` - AppError, ValidationError...).
+- [ ] **M0-BE-04:** Viết Global Error Middleware (`src/core/middlewares/error.middleware.ts`) bắt ZodError và AppError.
+- [ ] **M0-BE-05:** Viết file `src/app.ts` (Entry point) gắn CORS, Helmet, JSON Parser và Error Middleware. Khai báo script `dev` bằng Nodemon.
+- [ ] **M0-BE-06:** Tạo `docker-compose.yml` định nghĩa service PostgreSQL 16 và Redis 7. Khởi động Docker.
+- [ ] **M0-BE-07:** Cài đặt Prisma (`npm install prisma @prisma/client`) và chạy `npx prisma init`.
+- [ ] **M0-BE-08:** Khai báo file `src/core/database/prisma.service.ts` để khởi tạo kết nối Prisma tái sử dụng toàn cục.
 
----
-
-### 2. MODULE M-BRANCH (Chi nhánh)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S1-M2-T01** | DB | `prisma/schema.prisma` | Bảng `branches` với lat, lng (DECIMAL 10,8). |
-| **S1-M2-T02** | App/Infra | `branch.repository.ts`, `branch.usecase.ts` | **Nghiệp vụ:** CRUD Chi nhánh. Hàm `findNearest(lat, lng)` dùng toán tử Haversine tính khoảng cách. Chỉ trả về `is_active=true`. |
-| **S1-M2-T03** | API | `branch.controller.ts` | **Nghiệp vụ:** Admin có quyền Write. Customer/PWA được quyền GET public. |
+#### Frontend Foundation
+- [ ] **M0-FE-01:** Khởi tạo thư mục `Frontend` bằng `npx create-next-app@14` (App Router, Tailwind CSS, TypeScript). Dọn dẹp boilerplate.
+- [ ] **M0-FE-02:** Cài đặt `shadcn-ui` và thiết lập cấu hình cơ bản (`components.json`, `tailwind.config.ts`).
+- [ ] **M0-FE-03:** Tạo cấu trúc thư mục route: `src/app/(pwa)/`, `src/app/admin/`, `src/app/pos/`.
+- [ ] **M0-FE-04:** Khởi tạo `src/lib/api-client.ts` sử dụng Axios, tích hợp Interceptors để đính kèm Token.
+- [ ] **M0-FE-05:** Cài đặt Zustand (hoặc React Context) để quản lý Global State (Ví dụ: Auth Store).
 
 ---
 
-### 3. MODULE M-PRODUCT (Sản phẩm & Danh mục)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S1-M3-T01** | DB | `prisma/schema.prisma` | Bảng `categories`, `products`, `product_images`, `combo_products`. |
-| **S1-M3-T02** | Infra | `local-storage.service.ts` | **Nghiệp vụ:** Lưu file vật lý vào `/uploads/`. Tự động tạo thư mục nếu thiếu. |
-| **S1-M3-T03** | App | `upload-image.usecase.ts` | **Nghiệp vụ:** Check file size < 5MB, JPG/PNG, gọi `local-storage.service`, lưu bảng `product_images` (đặt `is_primary` nếu là ảnh đầu tiên). |
-| **S1-M3-T04** | App | `product.usecase.ts` | **Nghiệp vụ:** Create/Update sản phẩm. Phải lưu các trường F&B (`allergens`, `expiry_days`, `storage_temp`). Kiểm tra SKU duy nhất (`ERR_DUPLICATE`). |
-| **S1-M3-T05** | App | `combo.usecase.ts` | **Nghiệp vụ:** Validation combo: Check sản phẩm con có tồn tại và đang active không trước khi lưu vào `combo_products`. |
-| **S1-M3-T06** | App | `get-products.usecase.ts` | **Nghiệp vụ:** API danh sách phải lọc theo `is_seasonal` (chỉ hiển thị nếu thời gian hiện tại nằm trong khoảng `seasonal_start` và `seasonal_end`). |
-| **S1-M3-T07** | API | `product.controller.ts`, `upload.middleware.ts` | Setup `multer` middleware. Public file tĩnh `/uploads` trong Express app. |
+### MODULE 1: M-AUTH (Tài khoản & Xác thực)
+
+#### 1.1. Backend
+**1.1.1. Database & Domain**
+- [ ] **M1-BE-DB-01:** Định nghĩa schema các bảng `users`, `customer_tiers`, `otp_codes`, `branches`, `staff_branches` vào `prisma/schema.prisma`.
+- [ ] **M1-BE-DB-02:** Chạy `npx prisma migrate dev` tạo CSDL thực tế.
+- [ ] **M1-BE-DM-01:** Khai báo `RoleEnum` (`src/modules/auth/domain/enums/role.enum.ts`).
+- [ ] **M1-BE-DM-02:** Viết lớp `UserEntity` tinh gọn độc lập nghiệp vụ (`src/modules/auth/domain/entities/user.entity.ts`).
+- [ ] **M1-BE-DM-03:** Khai báo các Interface: `IUserRepository`, `ITokenService`, `IOtpService`, `IPasswordService`.
+
+**1.1.2. Infrastructure (Thực thi Repo/Service)**
+- [ ] **M1-BE-IF-01:** Code `BcryptPasswordService` (hash/compare password).
+- [ ] **M1-BE-IF-02:** Code `JwtTokenService` (sign/verify Access & Refresh Token).
+- [ ] **M1-BE-IF-03:** Code `DbOtpService` (Sinh code 6 số random, lưu xuống DB có TTL, hàm verify).
+- [ ] **M1-BE-IF-04:** Code `PrismaUserRepository` (Thao tác với Postgres, map về Domain Entity).
+
+**1.1.3. Application (Use Cases)**
+- [ ] **M1-BE-UC-01:** Code `RegisterUseCase`: check trùng phone -> hash pass -> lưu DB -> gọi OTP Service.
+- [ ] **M1-BE-UC-02:** Code `VerifyOtpUseCase`: check OTP hợp lệ -> đánh dấu user isVerified (hoặc active) -> sinh Token.
+- [ ] **M1-BE-UC-03:** Code `LoginUseCase`: check phone -> check pass -> sinh Token.
+- [ ] **M1-BE-UC-04:** Code `GetProfileUseCase` & `UpdateProfileUseCase`.
+
+**1.1.4. API & Routers**
+- [ ] **M1-BE-API-01:** Định nghĩa schema Zod Validate cho Register/Login Request (`src/modules/auth/api/auth.schema.ts`).
+- [ ] **M1-BE-API-02:** Viết `AuthController` bọc lấy UseCases, trả về JSON chuẩn.
+- [ ] **M1-BE-API-03:** Viết `AuthRouter` và đăng ký vào `app.ts`.
+- [ ] **M1-BE-API-04:** Viết `AuthMiddleware` trích xuất Header Bearer Token -> gán `req.user`.
+
+#### 1.2. Frontend (PWA & Admin)
+- [ ] **M1-FE-01:** Tạo UI Component: LoginForm & RegisterForm (`src/components/auth/...`).
+- [ ] **M1-FE-02:** Tạo UI Component: OtpInputForm.
+- [ ] **M1-FE-03:** Lắp ráp trang PWA Login/Register (`src/app/(pwa)/auth/login/page.tsx`). Tích hợp gọi API `/api/auth/register` và `/api/auth/verify-otp`.
+- [ ] **M1-FE-04:** Xử lý lưu Access/Refresh Token sau khi login thành công (Zustand + LocalStorage/Cookie). Redirect về Home.
+- [ ] **M1-FE-05:** Lắp ráp trang Admin Login (`src/app/admin/login/page.tsx`).
+- [ ] **M1-FE-06:** Tạo Provider bảo vệ Route (Route Guard): chặn khách vào `/admin`, chặn user chưa đăng nhập.
 
 ---
 
-### 4. MODULE M-INVENTORY (Tồn kho chống Over-selling)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S1-M4-T01** | DB | `prisma/schema.prisma` | Bảng `inventory`, `inventory_logs`, `stock_transfers`. Unique(`product_id`, `branch_id`). |
-| **S1-M4-T02** | Infra | `prisma-inventory.repository.ts` | **Nghiệp vụ CỐT LÕI (Row-level Locking):** Khi trừ kho bán hàng, bắt buộc dùng Transaction + `$executeRaw` với `SELECT stock FROM inventory WHERE ... FOR UPDATE` hoặc dùng atomic update `increment`/`decrement` của Prisma để tránh Race Condition. |
-| **S1-M4-T03** | App | `adjust-stock.usecase.ts` | **Nghiệp vụ:** Cập nhật kho phải đi kèm việc GHI LOG vào `inventory_logs` (loại: `import`, `export`, `sale`). Ném lỗi `ERR_OUT_OF_STOCK` nếu xuất quá tồn. |
-| **S1-M4-T04** | App | `transfer.usecase.ts` | **Nghiệp vụ:** Phiếu chuyển kho. Khi status chuyển thành `completed`, hệ thống gọi Transaction để TRỪ kho A và CỘNG kho B đồng thời. Ghi log `transfer_out` và `transfer_in`. |
-
----
-
-### 5. MODULE M-CRM (Phân hạng tự động)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S1-M5-T01** | DB | `prisma/seed.ts` | Bảng `customer_tiers`. Seed data: Bronze (0%), Silver (1%), Gold (2%), Diamond (5%). |
-| **S1-M5-T02** | App | `evaluate-tier.usecase.ts` | **Nghiệp vụ (THĂNG/XUỐNG HẠNG):**<br>- So sánh `total_spent` của user với `min_spent` của Tiers (để thăng hạng).<br>- So sánh với `maintain_spent` (để kiểm tra xem có bị rớt hạng không).<br>- Cập nhật `tier_id` và `tier_evaluated_at` vào bảng `users`. |
-| **S1-M5-T03** | App | `lookup.usecase.ts` | **Nghiệp vụ:** API Lookup cho POS (quét SĐT). Trả về tổng hợp: User Info, Tên Hạng, % Giảm giá, Số dư Ví, Số dư Điểm. |
-
----
-
-## SPRINT 2: FINANCIAL CORE (Tài chính, Ví & Khuyến mãi)
-
-### 6. MODULE M-WALLET (Ví điện tử & Idempotency)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S2-M6-T01** | DB | `prisma/schema.prisma` | Bảng `wallets`, `wallet_transactions`. Constraint: `balance >= 0`. |
-| **S2-M6-T02** | Infra | `prisma-wallet.repository.ts` | **Nghiệp vụ CỐT LÕI (Idempotency & Lock):** Update balance bằng Database Transaction. Bắt buộc kiểm tra `idempotency_key` trong `wallet_transactions` để chống cộng tiền 2 lần cho cùng 1 payload. |
-| **S2-M6-T03** | App | `topup-wallet.usecase.ts` | **Nghiệp vụ:** Sinh mã định danh nạp tiền (VD: `TFM NAPVI <phone>`) và tạo link QR code SePay (`https://qr.sepay.vn/img?...`). |
-| **S2-M6-T04** | App | `deduct-wallet.usecase.ts` | **Nghiệp vụ:** Trừ tiền ví. Kiểm tra `balance_before >= amount`. Ném lỗi `ERR_INSUFFICIENT_BALANCE` nếu không đủ. Ghi log `wallet_transactions` (loại `payment`). |
-
-### 7. MODULE M-SEPAY (Tích hợp Webhook tự động)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S2-M7-T01** | App | `verify-sepay-signature.service.ts` | **Nghiệp vụ (Bảo mật):** Đọc Header của SePay webhook, tạo mã băm HMAC-SHA256 với Secret Key, so sánh chữ ký. Ném `ERR_SEPAY_SIGNATURE` nếu sai. |
-| **S2-M7-T02** | App | `sepay-webhook.usecase.ts` | **Nghiệp vụ:** Xử lý Payload. Parse cú pháp `TFM NAPVI <phone>` trong `content`. Tìm Wallet tương ứng -> Tạo `idempotency_key` từ `sepay_transaction_id` -> Gọi `TopupWalletUseCase` cộng tiền. |
-| **S2-M7-T03** | API | `sepay.controller.ts` | Endpoint POST `/api/webhook/sepay`. Trả về `HTTP 200 OK` nhanh chóng theo tiêu chuẩn webhook. |
-
-### 8. MODULE M-POINTS (Điểm thưởng)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S2-M8-T01** | DB | `prisma/schema.prisma` | Bảng `points_ledger`. |
-| **S2-M8-T02** | App | `earn-points.usecase.ts` | **Nghiệp vụ (Tích điểm):** Nhận tham số tiền đơn hàng (VD: 500,000). Công thức: `FLOOR(500,000 / 100,000) * 10 = 50 điểm`. Cập nhật `points_balance` ở `users` và ghi `points_ledger` (loại `earn`). |
-| **S2-M8-T03** | App | `redeem-points.usecase.ts` | **Nghiệp vụ (Tiêu điểm):** Công thức: `FLOOR(points / 1000) * 10,000 VND`. Trừ điểm, ghi log `redeem`. Check lỗi `ERR_INSUFFICIENT_POINTS`. |
-
-### 9. MODULE M-VOUCHER (Khuyến mãi & Flash Sale)
-| Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
-|---------|-------------|------|------------------------------------------|
-| **S2-M9-T01** | DB | `prisma/schema.prisma` | Bảng `vouchers`, `voucher_usage`, `flash_sales`, `flash_sale_products`. |
-| **S2-M9-T02** | App | `validate-voucher.usecase.ts` | **Nghiệp vụ cốt lõi:** Lọc qua 5 tầng điều kiện:<br>1. Ngày active (`start_date`, `end_date`)<br>2. `min_order` (Tổng tiền >= ngưỡng)<br>3. `usage_limit` (Đã hết lượt dùng chung chưa?)<br>4. `per_user_limit` (User này đã dùng quá số lần cho phép chưa ở `voucher_usage`?)<br>5. `target_tier` / `target_branch` có khớp không?<br>Ném `ERR_VOUCHER_INVALID` nếu vi phạm. |
-| **S2-M9-T03** | App | `flash-sale.usecase.ts` | **Nghiệp vụ:** Trigger Flash Sale: Check `start_time` & `end_time`. Khi mua sản phẩm Flash Sale, sử dụng logic Row-level lock để trừ `stock_limit` (chống bán lố lượng SP sale). |
-
----
-
-## KIỂM SOÁT DEPENDENCY TRƯỚC KHI CODE
-* M-AUTH làm nền cho mọi module. M-BRANCH và M-PRODUCT phải có trước M-INVENTORY.
-* M-WALLET phải xong phần Transaction Core thì M-SEPAY Webhook mới có thể cắm vào.
-* DB Layer: Phải chạy thành công DB migration với ĐỦ 23 bảng trước khi code các module.
-
-*(Kế hoạch này đảm bảo Dev AG-03 không bị sót bất kỳ logic bảo mật hay nghiệp vụ nào được đề ra từ AG-01 và AG-02)*
+### Các Module tiếp theo (M2 - M5) sẽ được bổ sung chi tiết tương tự khi hoàn thành M0 & M1.
+*(Tránh việc Plan quá dài trong 1 lần đọc, tập trung Focus vào Sprint đầu tiên)*
