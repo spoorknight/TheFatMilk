@@ -1,0 +1,39 @@
+{
+  "name": "the_fat_milk",
+  "version": "1.0.0",
+  "description": "> **Dành cho người đọc lần đầu hoặc AI Agent với context mới:** > Đây là tài liệu duy nhất bạn cần đọc trước. Nó giải thích toàn bộ hệ thống, thứ tự đọc tài liệu, và cách khởi chạy đúng.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/spoorknight/TheFatMilk.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/spoorknight/TheFatMilk/issues"
+  },
+  "homepage": "https://github.com/spoorknight/TheFatMilk#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.9.3",
+    "nodemon": "^3.1.14",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}
