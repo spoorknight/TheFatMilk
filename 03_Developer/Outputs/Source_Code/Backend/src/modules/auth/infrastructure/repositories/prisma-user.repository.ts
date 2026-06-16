@@ -1,4 +1,4 @@
-import { IUserRepository } from '../../domain/repositories/user.repository.interface';
+import { IUserRepository, ICreateUserData } from '../../domain/repositories/user.repository.interface';
 import { UserEntity } from '../../domain/entities/user.entity';
 import { prisma } from '../../../../core/database/prisma.service';
 
@@ -39,7 +39,7 @@ export class PrismaUserRepository implements IUserRepository {
     return this.mapToDomain(user);
   }
 
-  async create(user: Omit<UserEntity, 'id' | 'createdAt' | 'updatedAt'>): Promise<UserEntity> {
+  async create(user: ICreateUserData): Promise<UserEntity> {
     const created = await prisma.user.create({
       data: {
         phone: user.phone,
