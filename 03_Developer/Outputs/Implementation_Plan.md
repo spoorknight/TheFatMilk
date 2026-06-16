@@ -2,7 +2,7 @@
 
 **Kịch bản:** Scenario 1 - Greenfield (Phân rã mức Class/File/Logic)
 **Agent:** AG-03 (Developer)
-**Trạng thái:** Chờ PM phê duyệt
+**Trạng thái:** Đang thực thi (Sprint 1)
 
 Bản kế hoạch này đã được tham chiếu chéo chắt chẽ với `Requirements_Spec.md`, `Database_Schema.md` và `API_Contracts.md` nhằm bảo đảm KHÔNG bỏ sót bất kỳ một Business Logic hay Non-functional Requirement nào (đặc biệt là Row-level locking, Idempotency, Logic hạ hạng, Mã hóa HMAC).
 
@@ -13,7 +13,7 @@ Bản kế hoạch này đã được tham chiếu chéo chắt chẽ với `Req
 ### 1. MODULE M-AUTH (Core, Users & Staff)
 | Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
 |---------|-------------|------|------------------------------------------|
-| **S1-M1-T00** | Infra | `docker-compose.yml`, `.env` | Setup PostgreSQL 16 & Redis 7. Đảm bảo chạy trước khi migrate. |
+| [x] **S1-M1-T00** | Infra | `docker-compose.yml`, `.env` | Setup PostgreSQL 16 & Redis 7. Đảm bảo chạy trước khi migrate. |
 | **S1-M1-T01** | Core | `src/core/middlewares/error.middleware.ts` | Bắt Validation Error (Zod), JWT Error, Custom AppError -> xuất HTTP 400/401/403/404/500 tương ứng. |
 | **S1-M1-T02** | DB | `prisma/schema.prisma` | Bảng `users`, `otp_codes`, `staff_branches`. Tích hợp Prisma Init & Migrate. Set `phone` UNIQUE, `is_deleted` = false. |
 | **S1-M1-T03** | Domain | `src/modules/auth/domain/...` | Entity `User`. Interface `IUserRepository`, `ITokenService`, `IOtpService`. |
