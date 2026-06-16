@@ -21,7 +21,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 - [x] **M0-FE-02:** Cài đặt `shadcn-ui`, cấu hình `components.json`, `tailwind.config.ts`.
 - [x] **M0-FE-03:** Setup PWA config (`manifest.json`, icon 1024x1024) [REQ-F-001].
 - [x] **M0-FE-04:** Tạo layout root chia route: `/(pwa)/`, `/admin/`, `/pos/`. Thiết lập Header cố định và Bottom Navigation [REQ-F-004, REQ-F-011].
-- [ ] **M0-FE-05:** Khởi tạo `api-client.ts` (Axios) và cấu hình Zustand Global Store. Tích hợp Service Workers cơ bản [REQ-F-003].
+- [x] **M0-FE-05:** Khởi tạo `api-client.ts` (Axios) và cấu hình Zustand Global Store. Tích hợp Service Workers cơ bản [REQ-F-003].
 
 ---
 
