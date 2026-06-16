@@ -7,7 +7,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 ### MODULE 0: FOUNDATION (Thiết lập Nền tảng)
 
 #### Backend Foundation
-- [ ] **M0-BE-01:** Khởi tạo thư mục `Backend`, chạy `npm init`, cài đặt các package cơ bản (express, typescript, dotenv, zod) và setup `tsconfig.json`.
+- [x] **M0-BE-01:** Khởi tạo thư mục `Backend`, chạy `npm init`, cài đặt các package cơ bản (express, typescript, dotenv, zod) và setup `tsconfig.json`.
 - [ ] **M0-BE-02:** Tạo file `.env` mẫu và `src/core/config/env.ts` dùng Zod parse/validate biến môi trường.
 - [ ] **M0-BE-03:** Viết Custom Error classes (`app.error.ts`).
 - [ ] **M0-BE-04:** Viết Global Error Middleware (`error.middleware.ts`).
