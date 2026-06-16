@@ -14,7 +14,7 @@ Bản kế hoạch này đã được tham chiếu chéo chắt chẽ với `Req
 | Task ID | Lớp (Layer) | File | Business Logic / Ràng buộc (Constraints) |
 |---------|-------------|------|------------------------------------------|
 | [x] **S1-M1-T00** | Infra | `docker-compose.yml`, `.env` | Setup PostgreSQL 16 & Redis 7. Đảm bảo chạy trước khi migrate. |
-| **S1-M1-T01** | Core | `src/core/middlewares/error.middleware.ts` | Bắt Validation Error (Zod), JWT Error, Custom AppError -> xuất HTTP 400/401/403/404/500 tương ứng. |
+| [x] **S1-M1-T01** | Core | `src/core/middlewares/error.middleware.ts` | Bắt Validation Error (Zod), JWT Error, Custom AppError -> xuất HTTP 400/401/403/404/500 tương ứng. |
 | **S1-M1-T02** | DB | `prisma/schema.prisma` | Bảng `users`, `otp_codes`, `staff_branches`. Tích hợp Prisma Init & Migrate. Set `phone` UNIQUE, `is_deleted` = false. |
 | **S1-M1-T03** | Domain | `src/modules/auth/domain/...` | Entity `User`. Interface `IUserRepository`, `ITokenService`, `IOtpService`. |
 | **S1-M1-T04** | Infra | `src/modules/auth/infrastructure/...` | Implement JWT Service (expires), OTP Service (lưu OTP vào bảng `otp_codes` hoặc Redis với TTL 5 phút, bcrypt hash mật khẩu). |
