@@ -3,6 +3,7 @@
 **Kịch bản:** Scenario 1 - Greenfield (Phân rã mức Class/File/Logic)
 **Agent:** AG-03 (Developer)
 **Trạng thái:** Đang thực thi (Sprint 1)
+**Thư mục làm việc (Working Dir):** `03_Developer/Outputs/Source_Code/`
 
 Bản kế hoạch này đã được tham chiếu chéo chắt chẽ với `Requirements_Spec.md`, `Database_Schema.md` và `API_Contracts.md` nhằm bảo đảm KHÔNG bỏ sót bất kỳ một Business Logic hay Non-functional Requirement nào (đặc biệt là Row-level locking, Idempotency, Logic hạ hạng, Mã hóa HMAC).
 
