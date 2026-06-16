@@ -1,6 +1,6 @@
-# Kế hoạch Triển khai Chi tiết Toàn Bộ (Granular Parallel Plan)
+# Kế hoạch Triển khai Tường Minh & Toàn Diện (Parallel BE & FE)
 
-Bản kế hoạch này phân rã công việc đến mức độ **từng File/Logic đơn lẻ** cho TẤT CẢ 5 MODULE. Mỗi task được thực thi cực kỳ tinh gọn, giúp đảm bảo không bị mơ hồ.
+Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirements_Spec.md**, **Database_Schema.md**, và **Module_Breakdown.md**. Mỗi task không chỉ quy định rõ tên file/logic mà còn mapping trực tiếp với các mã yêu cầu (Ví dụ: `[REQ-F-001]`).
 
 ---
 
@@ -8,123 +8,113 @@ Bản kế hoạch này phân rã công việc đến mức độ **từng File/
 
 #### Backend Foundation
 - [ ] **M0-BE-01:** Khởi tạo thư mục `Backend`, chạy `npm init`, cài đặt các package cơ bản (express, typescript, dotenv, zod) và setup `tsconfig.json`.
-- [ ] **M0-BE-02:** Tạo file `.env` mẫu và `src/core/config/env.ts` dùng Zod để parse và validate biến môi trường.
-- [ ] **M0-BE-03:** Viết các Custom Error classes (`src/core/errors/app.error.ts` - AppError, ValidationError...).
-- [ ] **M0-BE-04:** Viết Global Error Middleware (`src/core/middlewares/error.middleware.ts`) bắt ZodError và AppError.
-- [ ] **M0-BE-05:** Viết file `src/app.ts` (Entry point) gắn CORS, Helmet, JSON Parser và Error Middleware. Khai báo script `dev` bằng Nodemon.
-- [ ] **M0-BE-06:** Tạo `docker-compose.yml` định nghĩa service PostgreSQL 16 và Redis 7. Khởi động Docker.
-- [ ] **M0-BE-07:** Cài đặt Prisma (`npm install prisma @prisma/client`) và chạy `npx prisma init`.
-- [ ] **M0-BE-08:** Khai báo file `src/core/database/prisma.service.ts` để khởi tạo kết nối Prisma tái sử dụng toàn cục.
+- [ ] **M0-BE-02:** Tạo file `.env` mẫu và `src/core/config/env.ts` dùng Zod parse/validate biến môi trường.
+- [ ] **M0-BE-03:** Viết Custom Error classes (`app.error.ts`).
+- [ ] **M0-BE-04:** Viết Global Error Middleware (`error.middleware.ts`).
+- [ ] **M0-BE-05:** Viết file `app.ts` (Entry point) gắn CORS, Helmet, JSON Parser và Error Middleware. Khai báo script `dev` bằng Nodemon.
+- [ ] **M0-BE-06:** Tạo `docker-compose.yml` định nghĩa PostgreSQL 16 và Redis 7.
+- [ ] **M0-BE-07:** Cài đặt Prisma và chạy `npx prisma init`.
+- [ ] **M0-BE-08:** Khai báo file `prisma.service.ts` quản lý connection.
 
 #### Frontend Foundation
-- [ ] **M0-FE-01:** Khởi tạo thư mục `Frontend` bằng `npx create-next-app@14` (App Router, Tailwind CSS, TypeScript). Dọn dẹp boilerplate.
-- [ ] **M0-FE-02:** Cài đặt `shadcn-ui` và thiết lập cấu hình cơ bản (`components.json`, `tailwind.config.ts`).
-- [ ] **M0-FE-03:** Tạo cấu trúc thư mục route: `src/app/(pwa)/`, `src/app/admin/`, `src/app/pos/`.
-- [ ] **M0-FE-04:** Khởi tạo `src/lib/api-client.ts` sử dụng Axios, tích hợp Interceptors để đính kèm Token.
-- [ ] **M0-FE-05:** Cài đặt Zustand (hoặc React Context) để quản lý Global State (Ví dụ: Auth Store).
+- [ ] **M0-FE-01:** Khởi tạo thư mục `Frontend` bằng `npx create-next-app@14` (App Router, Tailwind CSS, TypeScript).
+- [ ] **M0-FE-02:** Cài đặt `shadcn-ui`, cấu hình `components.json`, `tailwind.config.ts`.
+- [ ] **M0-FE-03:** Setup PWA config (`manifest.json`, icon 1024x1024) [REQ-F-001].
+- [ ] **M0-FE-04:** Tạo layout root chia route: `/(pwa)/`, `/admin/`, `/pos/`. Thiết lập Header cố định và Bottom Navigation [REQ-F-004, REQ-F-011].
+- [ ] **M0-FE-05:** Khởi tạo `api-client.ts` (Axios) và cấu hình Zustand Global Store. Tích hợp Service Workers cơ bản [REQ-F-003].
 
 ---
 
 ### MODULE 1: M-AUTH (Tài khoản & Xác thực)
 
-#### 1.1. Backend
-- [ ] **M1-BE-DB-01:** Định nghĩa schema các bảng `users`, `customer_tiers`, `otp_codes`, `branches`, `staff_branches` vào `prisma/schema.prisma`. Chạy migrate.
-- [ ] **M1-BE-DM-01:** Khai báo `RoleEnum` (`src/modules/auth/domain/enums/role.enum.ts`) và `UserEntity`.
-- [ ] **M1-BE-DM-02:** Khai báo Interface: `IUserRepository`, `ITokenService`, `IOtpService`, `IPasswordService`.
-- [ ] **M1-BE-IF-01:** Code `BcryptPasswordService` (hash/compare password).
-- [ ] **M1-BE-IF-02:** Code `JwtTokenService` (sign/verify Token).
-- [ ] **M1-BE-IF-03:** Code `DbOtpService` (Sinh code, lưu DB có TTL, hàm verify).
-- [ ] **M1-BE-IF-04:** Code `PrismaUserRepository` (Thao tác với Postgres).
-- [ ] **M1-BE-UC-01:** Code `RegisterUseCase`: check trùng phone -> hash pass -> lưu DB -> gọi OTP Service.
-- [ ] **M1-BE-UC-02:** Code `VerifyOtpUseCase`: check OTP hợp lệ -> đánh dấu user verified -> sinh Token.
-- [ ] **M1-BE-UC-03:** Code `LoginUseCase` và `GetProfileUseCase`.
-- [ ] **M1-BE-API-01:** Định nghĩa Zod Schema (`auth.schema.ts`) và viết `AuthController`.
-- [ ] **M1-BE-API-02:** Viết `AuthMiddleware` (check Bearer) và `AuthRouter`.
+#### Backend
+- [ ] **M1-BE-DB-01:** Định nghĩa schema `users`, `customer_tiers`, `otp_codes`, `branches`, `staff_branches` vào `schema.prisma`. Migrate DB.
+- [ ] **M1-BE-DM-01:** Định nghĩa `RoleEnum` (Admin, Staff, Customer) [REQ-F-052] và `UserEntity`.
+- [ ] **M1-BE-IF-01:** Code `BcryptPasswordService` (hash pass) [REQ-NF-002].
+- [ ] **M1-BE-IF-02:** Code `JwtTokenService` và `DbOtpService` (TTL 5 phút).
+- [ ] **M1-BE-IF-03:** Code `PrismaUserRepository`.
+- [ ] **M1-BE-UC-01:** Code `RegisterUseCase`: Đăng ký SĐT + sinh OTP [REQ-F-051].
+- [ ] **M1-BE-UC-02:** Code `VerifyOtpUseCase`: Xác thực OTP -> Cấp Access/Refresh Token.
+- [ ] **M1-BE-UC-03:** Code `LoginUseCase` và `ForgotPasswordUseCase` (Quên mật khẩu qua OTP) [REQ-F-051].
+- [ ] **M1-BE-API-01:** Viết Zod Schema và `AuthController`.
+- [ ] **M1-BE-API-02:** Viết `AuthMiddleware` (Token verification) [REQ-NF-003].
 
-#### 1.2. Frontend
-- [ ] **M1-FE-01:** Tạo UI Component: LoginForm & RegisterForm, OtpInputForm (`src/components/auth/...`).
-- [ ] **M1-FE-02:** Lắp ráp trang PWA Login/Register (`src/app/(pwa)/auth/login/page.tsx`). Gọi API auth.
-- [ ] **M1-FE-03:** Viết logic Zustand lưu Access/Refresh Token sau login.
-- [ ] **M1-FE-04:** Lắp ráp trang Admin Login (`src/app/admin/login/page.tsx`).
-- [ ] **M1-FE-05:** Tạo Route Guard chặn chưa login vào `/admin`.
+#### Frontend
+- [ ] **M1-FE-01:** PWA - Code LoginForm, RegisterForm, OtpInputForm (`/auth/login`).
+- [ ] **M1-FE-02:** PWA - Code Trang Cá Nhân (`/profile`): Hiển thị Ảnh đại diện, Tên, Hạng thành viên + Progress bar tiến trình thăng hạng [REQ-F-014].
+- [ ] **M1-FE-03:** Admin/POS - Màn hình Login riêng biệt cho Staff/Admin. Phân quyền Guard Route chặn URL.
 
 ---
 
 ### MODULE 2: M-BRANCH & M-PRODUCT (Chi nhánh & Sản phẩm)
 
-#### 2.1. Backend
-- [ ] **M2-BE-DB-01:** Thêm schema `categories`, `products`, `product_gallery` vào Prisma. Chạy migrate.
-- [ ] **M2-BE-DM-01:** Entities & Interfaces: `Branch`, `Product`, `Category`, `IBranchRepository`, `IProductRepository`.
+#### Backend
+- [ ] **M2-BE-DB-01:** Thêm schema `categories`, `products` (kèm cờ `is_seasonal`), `allergens`, `product_gallery` vào Prisma.
 - [ ] **M2-BE-IF-01:** Code `PrismaBranchRepository` và `PrismaProductRepository`.
-- [ ] **M2-BE-IF-02:** Code `LocalFileStorageService` (logic save ảnh vào disk `/uploads`).
-- [ ] **M2-BE-UC-01:** Nhóm Branch UseCases: CreateBranch, GetBranches, FindNearestBranch (tính khoảng cách).
-- [ ] **M2-BE-UC-02:** Nhóm Product UseCases: CreateCategory, CreateProduct, UploadProductImage.
-- [ ] **M2-BE-API-01:** Viết Validation Schemas, Controller và Router cho `/branches` và `/products`. Cấu hình Middleware phục vụ static file ảnh.
+- [ ] **M2-BE-IF-02:** Code `LocalFileStorageService` (Upload ảnh nhiều file) [REQ-F-035].
+- [ ] **M2-BE-UC-01:** Code UseCases `Branch`: CRUD chi nhánh [REQ-F-034], Tìm chi nhánh gần nhất bằng Geolocation [REQ-F-005].
+- [ ] **M2-BE-UC-02:** Code UseCases `Category` & `Product`: Tạo SP kèm thông số F&B (trọng lượng, allergens, HSD, bảo quản) [REQ-F-035], tạo Combo/Bundle [REQ-F-037], upload Gallery.
+- [ ] **M2-BE-API-01:** Controller & Router.
 
-#### 2.2. Frontend
-- [ ] **M2-FE-01:** UI Component: ProductCard, CategoryFilter, UploadButton, BranchSelector.
-- [ ] **M2-FE-02:** Admin - Trang Quản lý Chi nhánh (Data Table CRUD).
-- [ ] **M2-FE-03:** Admin - Trang Quản lý Sản phẩm (Data Table + Form Upload Ảnh).
-- [ ] **M2-FE-04:** PWA - Trang chủ (Hiển thị Branch gần nhất, Menu SP phân loại theo Category).
-- [ ] **M2-FE-05:** PWA - Trang Product Detail (Image Carousel, Topping selection form).
+#### Frontend
+- [ ] **M2-FE-01:** Admin - Form tạo Chi nhánh [REQ-F-034].
+- [ ] **M2-FE-02:** Admin - Form tạo Sản phẩm đa nhiệm (kèm checkbox Allergens, up nhiều ảnh, is_seasonal) [REQ-F-035, REQ-F-036].
+- [ ] **M2-FE-03:** PWA - Trang chủ (Banner Slider, Icon danh mục, Thẻ VIP Quick View) [REQ-F-006, 007, 009].
+- [ ] **M2-FE-04:** PWA - Danh mục và Lưới sản phẩm 2 cột. Tính giá đã trừ chiết khấu cá nhân (theo hạng) ngay trên danh sách [REQ-F-010, REQ-F-021].
+- [ ] **M2-FE-05:** PWA - Trang Chi tiết SP: Hiển thị Gallery, thuộc tính Allergens, Topping.
 
 ---
 
 ### MODULE 3: M-INVENTORY (Kho & Tồn kho)
 
-#### 3.1. Backend
-- [ ] **M3-BE-DB-01:** Thêm schema `inventory`, `inventory_logs`, `stock_transfers` vào Prisma. Chạy migrate.
-- [ ] **M3-BE-DM-01:** Entities & Interfaces: `Inventory`, `IInventoryRepository`.
+#### Backend
+- [ ] **M3-BE-DB-01:** Thêm schema `inventory` (theo branch_id), `inventory_logs`, `stock_transfers`.
 - [ ] **M3-BE-IF-01:** Code `PrismaInventoryRepository`.
-- [ ] **M3-BE-UC-01:** UseCase: `StockInUseCase` (nhập), `StockOutUseCase` (xuất).
-- [ ] **M3-BE-UC-02:** UseCase: `CreateStockTransferUseCase` (chuyển kho).
-- [ ] **M3-BE-API-01:** Controller & Router cho `/inventory` và `/inventory/transfers`.
+- [ ] **M3-BE-UC-01:** UseCases Inventory: Ghi nhận Nhập/Xuất kho, lấy tồn kho theo chi nhánh [REQ-F-038].
+- [ ] **M3-BE-UC-02:** UseCases Transfer: Tạo Phiếu chuyển kho, Duyệt/Từ chối [REQ-F-039].
+- [ ] **M3-BE-API-01:** Controller & Router.
 
-#### 3.2. Frontend
-- [ ] **M3-FE-01:** UI Component: InventoryStockTable.
-- [ ] **M3-FE-02:** Admin - Màn hình theo dõi tồn kho theo chi nhánh.
-- [ ] **M3-FE-03:** Admin - Modal Form Nhập/Xuất kho thủ công.
-- [ ] **M3-FE-04:** Admin - Màn hình Quản lý Phiếu chuyển kho (Duyệt/Từ chối phiếu).
+#### Frontend
+- [ ] **M3-FE-01:** Admin - Bảng Tồn kho (filter theo Branch).
+- [ ] **M3-FE-02:** Admin - Modal Form Nhập/Xuất kho thủ công (lý do hỏng, nhập hàng).
+- [ ] **M3-FE-03:** Admin - Màn hình Quản lý Phiếu chuyển kho.
 
 ---
 
 ### MODULE 4: M-ORDER & POS (Bán hàng & Đặt hàng)
 
-#### 4.1. Backend
-- [ ] **M4-BE-DB-01:** Thêm schema `orders`, `order_items`, `payments` vào Prisma. Chạy migrate.
-- [ ] **M4-BE-DM-01:** Order Entity (Tích hợp logic tính tổng tiền, thuế), `IOrderRepository`, `ISePayAdapter`.
-- [ ] **M4-BE-IF-01:** Code `PrismaOrderRepository` (Tích hợp DB Transaction và Row-Level Lock để trừ tồn kho an toàn).
-- [ ] **M4-BE-IF-02:** Code `SePayPaymentService` (Tạo QR, Validate webhook signature).
-- [ ] **M4-BE-UC-01:** Code `CreateOrderUseCase` (từ PWA hoặc POS).
-- [ ] **M4-BE-UC-02:** Code `ProcessPaymentWebhookUseCase` (Gạch nợ tự động).
-- [ ] **M4-BE-UC-03:** Code `UpdateOrderStatusUseCase` (Pending -> Processing -> Completed).
-- [ ] **M4-BE-API-01:** Controllers cho `/orders` và public webhook cho `/webhooks/sepay`.
+#### Backend
+- [ ] **M4-BE-DB-01:** Schema `orders` (tính tiền chi tiết: subtotal, tier_discount, voucher, points), `order_items`, `payments`.
+- [ ] **M4-BE-IF-01:** `PrismaOrderRepository`: Code **DB Transaction + Row-level Locking** (`FOR UPDATE`) cực kỳ an toàn để trừ tồn kho chống over-selling [REQ-F-057].
+- [ ] **M4-BE-IF-02:** `SePayPaymentService`: Generate QR động & Webhook Verify Signature [REQ-F-027, REQ-NF-004].
+- [ ] **M4-BE-UC-01:** `CreateOrderUseCase`: Logic trừ voucher, trừ điểm, giảm giá hạng [REQ-F-056].
+- [ ] **M4-BE-UC-02:** `ProcessPaymentWebhookUseCase`: Gạch nợ tự động đơn hàng SePay.
+- [ ] **M4-BE-UC-03:** `UpdateOrderStatusUseCase`: Chờ duyệt -> Bếp làm -> Đã giao.
+- [ ] **M4-BE-API-01:** `OrderController` & `WebhookController`.
 
-#### 4.2. Frontend
-- [ ] **M4-FE-01:** UI Component: CartDrawer, CheckoutSummary, SePayQRCodeModal.
-- [ ] **M4-FE-02:** PWA - Quản lý Giỏ hàng (Zustand Global Store).
-- [ ] **M4-FE-03:** PWA - Trang Checkout (Nhập địa chỉ/Pick-up) và xem Barcode/QR thanh toán.
-- [ ] **M4-FE-04:** PWA - Lịch sử Đơn hàng và Real-time status.
-- [ ] **M4-FE-05:** POS - Xây dựng Layout máy tính tiền POS (Bên trái: Lưới sản phẩm, Bên phải: Bill, Nhập SĐT khách tích điểm).
-- [ ] **M4-FE-06:** POS - Màn hình Kanban Bếp (Kitchen Display System - nhận đơn, hoàn thành).
+#### Frontend
+- [ ] **M4-FE-01:** PWA - Trang Giỏ hàng: Ghi chú "ít đường", "thêm đá" [REQ-F-024], nhập địa chỉ nhận hàng/Pick-up [REQ-F-059].
+- [ ] **M4-FE-02:** PWA - Trang Thanh toán: Áp dụng Điểm [REQ-F-023], hiển thị QR SePay thanh toán [REQ-F-027].
+- [ ] **M4-FE-03:** PWA - Lịch sử Đơn hàng (Bộ lọc trạng thái) [REQ-F-018].
+- [ ] **M4-FE-04:** POS - Layout màn hình Máy tính tiền: Cột Barcode Scan bên trái [REQ-F-029], Hóa đơn bên phải. Tra cứu KH bằng SĐT [REQ-F-030].
+- [ ] **M4-FE-05:** POS - Tích hợp UI in hóa đơn nhiệt [REQ-F-033].
 
 ---
 
-### MODULE 5: M-CRM & M-PROMO (Khách hàng, Ví, Hạng, Khuyến mãi)
+### MODULE 5: M-CRM, WALLET & PROMO (Ví, Hạng, Khuyến mãi)
 
-#### 5.1. Backend
-- [ ] **M5-BE-DB-01:** Thêm schema `wallets`, `wallet_transactions`, `vouchers`, `flash_sales` vào Prisma. Migrate.
-- [ ] **M5-BE-DM-01:** Domain Logic: Quy tắc nâng hạng (Tier rules), tính điểm (Points logic).
-- [ ] **M5-BE-UC-01:** UseCase: `CalculatePointsAndTierUseCase` (chạy nền hoặc sau khi đơn hoàn thành).
-- [ ] **M5-BE-UC-02:** UseCase: `TopupWalletUseCase` (Nạp tiền ví qua SePay).
-- [ ] **M5-BE-UC-03:** UseCase: `ApplyVoucherUseCase` (Validation điều kiện voucher).
-- [ ] **M5-BE-API-01:** Controllers & Routers cho `/crm/wallet`, `/crm/vouchers`.
+#### Backend
+- [ ] **M5-BE-DB-01:** Schema `wallets`, `wallet_transactions`, `vouchers`, `flash_sales`, `points_ledger`.
+- [ ] **M5-BE-IF-01:** `PrismaWalletRepository`: Code Transaction + Row-Level Lock để nạp/trừ tiền ví không bị âm [REQ-F-058, REQ-NF-009].
+- [ ] **M5-BE-UC-01:** `EvaluateTierUseCase`: Chạy ngầm cộng dồn `total_spent` và tự động thăng hạng / cập nhật `% chiết khấu` [REQ-F-042, REQ-F-053].
+- [ ] **M5-BE-UC-02:** `CalculatePointsUseCase`: Logic tích lũy 10đ/100K [REQ-F-054].
+- [ ] **M5-BE-UC-03:** `TopupWalletUseCase`: Nạp ví qua Webhook SePay [REQ-F-016].
+- [ ] **M5-BE-UC-04:** `ApplyVoucherUseCase` & Logic tính thời gian đếm ngược Flash Sale [REQ-F-046].
+- [ ] **M5-BE-API-01:** Controller & Router cho CRM/Vouchers.
 
-#### 5.2. Frontend
-- [ ] **M5-FE-01:** PWA - Trang Hội Viên (Hiển thị thẻ thành viên QR code, lịch sử tích/tiêu điểm, thanh tiến trình thăng hạng).
-- [ ] **M5-FE-02:** PWA - Giao diện Ví Tiền (Số dư, Nút Nạp tiền, Lịch sử giao dịch ví).
-- [ ] **M5-FE-03:** PWA - Input áp dụng Mã Khuyến Mãi (Voucher) tích hợp vào trang Checkout.
-- [ ] **M5-FE-04:** Admin - Form Tạo Voucher (Giảm %, Giảm tiền, Điều kiện áp dụng).
-
----
-*End of Plan.*
+#### Frontend
+- [ ] **M5-FE-01:** PWA - Trang Ví Tiền: Nút "Nạp tiền" bật QR SePay định danh [REQ-F-015].
+- [ ] **M5-FE-02:** PWA - Thẻ Thành Viên: Lịch sử tích điểm, QR Code định danh KH cho POS [REQ-F-017].
+- [ ] **M5-FE-03:** PWA - Component Đếm ngược Flash Sale ở Trang Chủ [REQ-F-008].
+- [ ] **M5-FE-04:** Admin - Màn hình Cấu hình Hạng (Bronze/Silver/Gold) [REQ-F-041] và Tạo Voucher (Phạm vi chi nhánh/hạng KH) [REQ-F-045].
+- [ ] **M5-FE-05:** Admin - Dashboard Báo cáo Doanh thu (Chart) & Báo cáo Ví tổng để đối soát tài chính [REQ-F-047, REQ-F-049].
