@@ -13,8 +13,9 @@
 ### Phase 1.1: Core Boilerplate & Database Schema
 | Task ID | Lớp (Layer) | File tạo / chỉnh sửa | Hành động | Constraint |
 |---------|-------------|----------------------|-----------|------------|
+| **S1-M1-T00** | Infra | `docker-compose.yml`<br>`.env` | Thiết lập Docker Compose chạy PostgreSQL 16 và Redis 7. Khởi tạo DB vật lý. | Chạy `docker-compose up -d`. Đảm bảo connection string đúng trong `.env`. |
 | **S1-M1-T01** | Core | `src/core/middlewares/error.middleware.ts`<br>`src/core/config/env.ts` | Khởi tạo Express app, cấu hình Zod Error parser. | Bắt toàn bộ lỗi, map với Error Codes ở `API_Contracts.md`. |
-| **S1-M1-T02** | Core | `prisma/schema.prisma`<br>`src/core/database/prisma.ts` | Định nghĩa bảng `users`, `otp_codes`, `customer_tiers`. Chạy DB Migrate. | Field `phone` UNIQUE, `is_deleted` default false. |
+| **S1-M1-T02** | Core | `prisma/schema.prisma`<br>`src/core/database/prisma.ts` | Khởi tạo Prisma (`npx prisma init`). Định nghĩa bảng `users`, `otp_codes`, `customer_tiers`. Chạy DB Migrate (`npx prisma migrate dev`). | Field `phone` UNIQUE, `is_deleted` default false. |
 | **S1-M1-T03** | Domain | `src/modules/auth/domain/entities/user.entity.ts`<br>`role.enum.ts` | Định nghĩa class UserEntity thuần túy không lệ thuộc DB. | — |
 
 ### Phase 1.2: Infrastructure & Use Cases
