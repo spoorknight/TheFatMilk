@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import { authMiddleware } from '../../../core/middlewares/auth.middleware';
 import {
   registerSchema,
   verifyOtpSchema,
@@ -128,6 +129,58 @@ authRouter.post('/reset-password', async (req: Request, res: Response, next: Nex
     res.status(200).json({
       success: true,
       message: 'Đặt lại mật khẩu thành công',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /auth/me (Protected)
+authRouter.get('/me', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const user = await userRepository.findById(req.user!.userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Người dùng không tồn tại' });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user.id,
+        phone: user.phone,
+        full_name: user.fullName,
+        avatar_url: user.avatarUrl,
+        role: user.role,
+        tier_id: user.tierId,
+        total_spent: user.totalSpent.toString(),
+        points_balance: user.pointsBalance,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PUT /auth/me (Protected)
+authRouter.put('/me', authMiddleware, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { full_name, avatar_url } = req.body;
+    const updateData: Record<string, any> = {};
+    if (full_name) updateData.fullName = full_name;
+    if (avatar_url) updateData.avatarUrl = avatar_url;
+
+    const user = await userRepository.update(req.user!.userId, updateData);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        id: user.id,
+        phone: user.phone,
+        full_name: user.fullName,
+        avatar_url: user.avatarUrl,
+        role: user.role,
+      },
+      message: 'Cập nhật thông tin thành công',
     });
   } catch (error) {
     next(error);
