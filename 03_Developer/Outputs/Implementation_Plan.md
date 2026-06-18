@@ -37,7 +37,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 - [x] **M1-BE-UC-02:** Code `VerifyOtpUseCase`: Xác thực OTP -> Cấp Access/Refresh Token.
 - [x] **M1-BE-UC-03:** Code `LoginUseCase` và `ForgotPasswordUseCase` (Quên mật khẩu qua OTP) [REQ-F-051].
 - [x] **M1-BE-API-01:** Viết Zod Schema và `AuthController`.
-- [ ] **M1-BE-API-02:** Viết `AuthMiddleware` (Token verification) [REQ-NF-003].
+- [x] **M1-BE-API-02:** Viết `AuthMiddleware` (Token verification) [REQ-NF-003].
 
 #### Frontend
 - [ ] **M1-FE-01:** PWA - Code LoginForm, RegisterForm, OtpInputForm (`/auth/login`).
