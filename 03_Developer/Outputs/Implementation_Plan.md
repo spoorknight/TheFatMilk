@@ -42,7 +42,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 #### Frontend
 - [x] **M1-FE-01:** PWA - Code LoginForm, RegisterForm, OtpInputForm (`/auth/login`).
 - [x] **M1-FE-02:** PWA - Code Trang Cá Nhân (`/profile`): Hiển thị Ảnh đại diện, Tên, Hạng thành viên + Progress bar tiến trình thăng hạng [REQ-F-014].
-- [ ] **M1-FE-03:** Admin/POS - Màn hình Login riêng biệt cho Staff/Admin. Phân quyền Guard Route chặn URL.
+- [x] **M1-FE-03:** Admin/POS - Màn hình Login riêng biệt cho Staff/Admin. Phân quyền Guard Route chặn URL.
 
 ---
 
