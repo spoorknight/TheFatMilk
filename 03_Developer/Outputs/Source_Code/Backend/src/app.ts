@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { env } from './core/config/env';
 import { errorMiddleware } from './core/middlewares/error.middleware';
+import { authRouter } from './modules/auth/api/auth.controller';
 
 const app = express();
 
@@ -26,7 +27,8 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', message: 'The Fat Milk Backend is running.' });
 });
 
-// TODO: Register module routes here
+// Module routes
+app.use('/api/auth', authRouter);
 
 // Global Error Handler (must be the last middleware)
 app.use(errorMiddleware);
