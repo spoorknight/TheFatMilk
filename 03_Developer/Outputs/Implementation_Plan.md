@@ -33,7 +33,7 @@ Bản kế hoạch này đảm bảo tham chiếu chéo 100% với **Requirement
 - [x] **M1-BE-IF-01:** Code `BcryptPasswordService` (hash pass) [REQ-NF-002].
 - [x] **M1-BE-IF-02:** Code `JwtTokenService` và `DbOtpService` (TTL 5 phút).
 - [x] **M1-BE-IF-03:** Code `PrismaUserRepository`.
-- [ ] **M1-BE-UC-01:** Code `RegisterUseCase`: Đăng ký SĐT + sinh OTP [REQ-F-051].
+- [x] **M1-BE-UC-01:** Code `RegisterUseCase`: Đăng ký SĐT + sinh OTP [REQ-F-051].
 - [ ] **M1-BE-UC-02:** Code `VerifyOtpUseCase`: Xác thực OTP -> Cấp Access/Refresh Token.
 - [ ] **M1-BE-UC-03:** Code `LoginUseCase` và `ForgotPasswordUseCase` (Quên mật khẩu qua OTP) [REQ-F-051].
 - [ ] **M1-BE-API-01:** Viết Zod Schema và `AuthController`.
