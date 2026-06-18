@@ -91,3 +91,82 @@ model OtpCode {
   @@index([userId])
   @@map("otp_codes")
 }
+
+model Category {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String    @db.VarChar(100)
+  slug      String    @unique @db.VarChar(100)
+  iconUrl   String?   @map("icon_url") @db.VarChar(500)
+  sortOrder Int       @default(0) @map("sort_order")
+  isDeleted Boolean   @default(false) @map("is_deleted")
+  deletedAt DateTime? @map("deleted_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  categoryId    String    @map("category_id") @db.Uuid
+  name          String    @db.VarChar(200)
+  slug          String    @unique @db.VarChar(200)
+  description   String?   @db.Text
+  sku           String    @unique @db.VarChar(50)
+  costPrice     BigInt    @default(0) @map("cost_price")
+  sellingPrice  BigInt    @default(0) @map("selling_price")
+  weight        String?   @db.VarChar(50)
+  ingredients   String?   @db.Text
+  allergens     String?   @db.VarChar(500)
+  expiryDays    Int?      @map("expiry_days")
+  storageTemp   String?   @map("storage_temp") @db.VarChar(50)
+  isCombo       Boolean   @default(false) @map("is_combo")
+  comboPrice    BigInt?   @map("combo_price")
+  isSeasonal    Boolean   @default(false) @map("is_seasonal")
+  seasonalStart DateTime? @map("seasonal_start") @db.Date
+  seasonalEnd   DateTime? @map("seasonal_end") @db.Date
+  isActive      Boolean   @default(true) @map("is_active")
+  isDeleted     Boolean   @default(false) @map("is_deleted")
+  deletedAt     DateTime? @map("deleted_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  category      Category       @relation(fields: [categoryId], references: [id])
+  images        ProductImage[]
+  comboParentOf ComboProduct[] @relation("ComboParent")
+  comboChildOf  ComboProduct[] @relation("ComboChild")
+
+  @@index([categoryId])
+  @@index([sku])
+  @@index([isSeasonal, seasonalStart, seasonalEnd])
+  @@map("products")
+}
+
+model ProductImage {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  imageUrl  String   @map("image_url") @db.VarChar(500)
+  sortOrder Int      @default(0) @map("sort_order")
+  isPrimary Boolean  @default(false) @map("is_primary")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+model ComboProduct {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  comboId   String @map("combo_id") @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  quantity  Int    @default(1)
+
+  combo   Product @relation("ComboParent", fields: [comboId], references: [id], onDelete: Cascade)
+  product Product @relation("ComboChild", fields: [productId], references: [id])
+
+  @@unique([comboId, productId])
+  @@map("combo_products")
+}
