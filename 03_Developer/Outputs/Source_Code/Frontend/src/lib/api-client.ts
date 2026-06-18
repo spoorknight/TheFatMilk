@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -11,11 +11,12 @@ export const apiClient = axios.create({
 // Request Interceptor
 apiClient.interceptors.request.use(
   (config) => {
-    // TODO: Get token from Zustand or Cookies and attach it here
-    // const token = useGlobalStore.getState().token;
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
     return config;
   },
   (error) => {

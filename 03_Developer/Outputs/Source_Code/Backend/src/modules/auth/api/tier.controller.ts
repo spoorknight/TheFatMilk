@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { prisma } from '../../core/database/prisma.service';
+import { prisma } from '../../../core/database/prisma.service';
 
 export const tierRouter = Router();
 
