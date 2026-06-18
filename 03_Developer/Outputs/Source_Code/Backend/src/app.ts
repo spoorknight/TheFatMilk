@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import { env } from './core/config/env';
 import { errorMiddleware } from './core/middlewares/error.middleware';
 import { authRouter } from './modules/auth/api/auth.controller';
+import { tierRouter } from './modules/auth/api/tier.controller';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 
 // Module routes
 app.use('/api/auth', authRouter);
+app.use('/api/tiers', tierRouter);
 
 // Global Error Handler (must be the last middleware)
 app.use(errorMiddleware);

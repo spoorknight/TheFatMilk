@@ -8,15 +8,24 @@ import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { useGlobalStore } from '@/store/global.store';
 import { authApi } from '@/lib/auth-api';
+import { apiClient } from '@/lib/api-client';
 import { useRouter } from 'next/navigation';
 
-// Tier definitions matching backend CustomerTier
-const TIERS = [
-  { slug: 'member', name: 'Member', min: 0, color: '#A0AEC0', emoji: '☕' },
-  { slug: 'silver', name: 'Silver', min: 2_000_000, color: '#A0AEC0', emoji: '🥈' },
-  { slug: 'gold', name: 'Gold', min: 5_000_000, color: '#ECC94B', emoji: '🥇' },
-  { slug: 'platinum', name: 'Platinum', min: 10_000_000, color: '#805AD5', emoji: '💎' },
-];
+// Emoji/color mapping by slug (cosmetic only – business data comes from API)
+const TIER_STYLE: Record<string, { color: string; emoji: string }> = {
+  member:   { color: '#A0AEC0', emoji: '☕' },
+  silver:   { color: '#A0AEC0', emoji: '🥈' },
+  gold:     { color: '#ECC94B', emoji: '🥇' },
+  platinum: { color: '#805AD5', emoji: '💎' },
+};
+
+interface TierData {
+  id: string;
+  name: string;
+  slug: string;
+  min_spent: string;
+  discount_percent: string;
+}
 
 interface ProfileData {
   id: string;
@@ -31,6 +40,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [tiers, setTiers] = useState<TierData[]>([]);
   const [loading, setLoading] = useState(true);
   const { token, logout } = useGlobalStore();
   const router = useRouter();
@@ -40,10 +50,15 @@ export default function ProfilePage() {
       router.push('/auth');
       return;
     }
-    const fetchProfile = async () => {
+
+    const fetchData = async () => {
       try {
-        const res = await authApi.getMe() as { data: ProfileData };
-        setProfile(res.data);
+        const [profileRes, tiersRes] = await Promise.all([
+          authApi.getMe() as Promise<{ data: ProfileData }>,
+          apiClient.get('/tiers') as Promise<{ data: TierData[] }>,
+        ]);
+        setProfile(profileRes.data);
+        setTiers(tiersRes.data);
       } catch {
         logout();
         router.push('/auth');
@@ -51,7 +66,7 @@ export default function ProfilePage() {
         setLoading(false);
       }
     };
-    fetchProfile();
+    fetchData();
   }, [token, router, logout]);
 
   if (loading) {
@@ -62,20 +77,25 @@ export default function ProfilePage() {
     );
   }
 
-  if (!profile) return null;
+  if (!profile || tiers.length === 0) return null;
 
   const totalSpent = parseInt(profile.total_spent || '0', 10);
 
-  // Calculate current tier and next tier
-  const currentTierIndex = TIERS.reduce((acc, tier, idx) => {
-    return totalSpent >= tier.min ? idx : acc;
+  // Calculate current tier and next tier from API data
+  const currentTierIndex = tiers.reduce((acc, tier, idx) => {
+    return totalSpent >= parseInt(tier.min_spent, 10) ? idx : acc;
   }, 0);
-  const currentTier = TIERS[currentTierIndex];
-  const nextTier = TIERS[currentTierIndex + 1] || null;
+  const currentTier = tiers[currentTierIndex];
+  const nextTier = tiers[currentTierIndex + 1] || null;
+  const currentMin = parseInt(currentTier.min_spent, 10);
+  const nextMin = nextTier ? parseInt(nextTier.min_spent, 10) : 0;
+
+  const style = TIER_STYLE[currentTier.slug] || { color: '#A0AEC0', emoji: '☕' };
+  const nextStyle = nextTier ? (TIER_STYLE[nextTier.slug] || { emoji: '⭐' }) : null;
 
   // Progress percentage to next tier
   const progressPercent = nextTier
-    ? Math.min(((totalSpent - currentTier.min) / (nextTier.min - currentTier.min)) * 100, 100)
+    ? Math.min(((totalSpent - currentMin) / (nextMin - currentMin)) * 100, 100)
     : 100;
 
   const formatCurrency = (amount: number) =>
@@ -100,7 +120,7 @@ export default function ProfilePage() {
         <div
           className="h-24 relative"
           style={{
-            background: `linear-gradient(135deg, ${currentTier.color}44, ${currentTier.color}88)`,
+            background: `linear-gradient(135deg, ${style.color}44, ${style.color}88)`,
           }}
         />
         <CardHeader className="-mt-12 items-center pb-2">
@@ -120,16 +140,18 @@ export default function ProfilePage() {
         <CardContent className="pt-6 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-2xl">{currentTier.emoji}</span>
+              <span className="text-2xl">{style.emoji}</span>
               <div>
                 <p className="font-semibold">{currentTier.name}</p>
-                <p className="text-xs text-muted-foreground">Hạng hiện tại</p>
+                <p className="text-xs text-muted-foreground">
+                  Giảm {currentTier.discount_percent}%
+                </p>
               </div>
             </div>
-            {nextTier && (
+            {nextTier && nextStyle && (
               <div className="text-right">
                 <p className="text-sm font-medium text-muted-foreground">
-                  {nextTier.emoji} {nextTier.name}
+                  {nextStyle.emoji} {nextTier.name}
                 </p>
                 <p className="text-xs text-muted-foreground">Hạng tiếp theo</p>
               </div>
@@ -143,7 +165,7 @@ export default function ProfilePage() {
               <span>{formatCurrency(totalSpent)}</span>
               {nextTier ? (
                 <span>
-                  Còn {formatCurrency(nextTier.min - totalSpent)} để lên {nextTier.name}
+                  Còn {formatCurrency(nextMin - totalSpent)} để lên {nextTier.name}
                 </span>
               ) : (
                 <span className="text-primary font-medium">Hạng cao nhất! 🎉</span>
